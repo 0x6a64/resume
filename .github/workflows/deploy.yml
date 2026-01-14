@@ -29,10 +29,10 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
-      - name: Install Sharp for Linux
-        run: pnpm add sharp --force
+      - name: Install Sharp with native binaries
+        run: pnpm add sharp --ignore-scripts=false
 
       - name: Build site
         run: pnpm run build
