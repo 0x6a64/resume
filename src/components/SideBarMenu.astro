@@ -1,13 +1,15 @@
 ---
 // Active menu item is determined dynamically via URL in the script below
-const base = import.meta.env.BASE_URL;
+// Ensure base always ends with slash for proper path joining
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 ---
 
 <ul class="menu grow shrink menu-md overflow-y-auto" data-base={base}>
     <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="home" href={base}>Home</a></li>
-    <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="resume" href={`${base}resume`}>Resume</a></li>
+    <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="resume" href={`${base}resume/`}>Resume</a></li>
     <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="blog" href={`${base}blog/`}>Blog</a></li>
-    <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="pottery" href={`${base}pottery`}>Pottery</a></li>
+    <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="pottery" href={`${base}pottery/`}>Pottery</a></li>
 </ul>
 
 <script>
