@@ -54,11 +54,11 @@ const { title, description, image = '/social_img.webp', ogType = 'website' } = A
 
 <!-- Service Worker Registration -->
 <script is:inline>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.warn('Service Worker registration failed:', err);
-      });
+  // Use window flag to prevent duplicate registration attempts with View Transitions
+  if ('serviceWorker' in navigator && !window.__swRegistered) {
+    window.__swRegistered = true;
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('Service Worker registration failed:', err);
     });
   }
 </script>

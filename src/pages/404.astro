@@ -107,4 +107,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       filter: drop-shadow(0 0 20px rgba(192, 163, 110, 0.6));
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-logo {
+      animation: none;
+    }
+    .main-logo {
+      animation: none;
+    }
+  }
 </style>

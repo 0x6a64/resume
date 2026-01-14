@@ -80,6 +80,7 @@ let resizeObserver: ResizeObserver | null = null;
 let listenersAttached = false;
 let resumeAnimationCallback: (() => void) | null = null;
 let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let visibilityAbortController: AbortController | null = null;
 
 function saveAnimationState(): void {
   if (currentAnimationState) {
@@ -193,14 +194,17 @@ export function initLogoAnimation(): void {
 
   // Setup ResizeObserver for cached rect with debouncing
   cachedRect = playground.getBoundingClientRect();
+  // Disconnect any existing observer before creating new one to prevent memory leaks
+  resizeObserver?.disconnect();
   resizeObserver = new ResizeObserver(() => {
     // Debounce resize updates to avoid frame drops during window resize
     if (resizeDebounceTimer) {
       clearTimeout(resizeDebounceTimer);
     }
     resizeDebounceTimer = setTimeout(() => {
-      // Guard against callback firing after cleanup
+      // Guard against callback firing after cleanup or element removed from DOM
       if (playground.dataset.initialized !== 'true') return;
+      if (!document.contains(playground)) return;
       cachedRect = playground.getBoundingClientRect();
       resizeDebounceTimer = null;
     }, 100);
@@ -317,8 +321,11 @@ export function initLogoAnimation(): void {
     }
   };
 
-  // Setup visibility change listener after callback is ready
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  // Setup visibility change listener with AbortController for reliable cleanup
+  visibilityAbortController = new AbortController();
+  document.addEventListener('visibilitychange', handleVisibilityChange, {
+    signal: visibilityAbortController.signal
+  });
 
   animationFrameId = requestAnimationFrame(animate);
 }
@@ -360,8 +367,11 @@ export function cleanupAnimation(): void {
     resizeObserver = null;
   }
 
-  // Remove visibility listener
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
+  // Abort visibility listener via AbortController for reliable cleanup
+  if (visibilityAbortController) {
+    visibilityAbortController.abort();
+    visibilityAbortController = null;
+  }
 
   // Reset all global state
   currentAnimationState = null;
@@ -371,9 +381,9 @@ export function cleanupAnimation(): void {
   resumeAnimationCallback = null;
   listenersAttached = false;
 
-  // Clear initialized flag from playground element
+  // Clear initialized flag from playground element using removeAttribute for reliability
   const playground = document.getElementById('logo-playground');
   if (playground) {
-    delete playground.dataset.initialized;
+    playground.removeAttribute('data-initialized');
   }
 }
