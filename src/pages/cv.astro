@@ -9,25 +9,36 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="mb-10 text-justify">
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-    aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Sales Engineer specializing in enterprise infrastructure, cloud, and security solutions. Proven ability to translate complex technical concepts into strategic business outcomes. Background in cybersecurity operations with hands-on expertise in SIEMs (CrowdStrike, Splunk), Linux systems administration, and cloud platforms (AWS). Two-time CTF competition champion with deep practical security knowledge.
   </div>
 
+  <!-- Key Achievements -->
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Education</div>
+    <div class="text-3xl w-full font-bold">Key Achievements</div>
   </div>
 
-  <div class="time-line-container grid gap-4 mb-10">
-    <TimeLineElement
-      title="Title Name"
-      subtitle="[start year] to [end year] at [Study Center Name], [City], [Country]"
-    />
-    <TimeLineElement
-      title="Title Name"
-      subtitle="[start year] to [end year] at [Study Center Name], [City], [Country]"
-    />
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body items-center text-center p-4">
+        <div class="text-4xl mb-2">🏆</div>
+        <h3 class="card-title text-sm">Tech 901 CTF</h3>
+        <p class="text-primary font-bold">1st Place 2024 & 2025</p>
+      </div>
+    </div>
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body items-center text-center p-4">
+        <div class="text-4xl mb-2">⭐</div>
+        <h3 class="card-title text-sm">Silex Data Solutions</h3>
+        <p class="text-primary font-bold">Employee of the Quarter</p>
+      </div>
+    </div>
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body items-center text-center p-4">
+        <div class="text-4xl mb-2">📜</div>
+        <h3 class="card-title text-sm">Professional Credentials</h3>
+        <p class="text-primary font-bold">28+ Certifications</p>
+      </div>
+    </div>
   </div>
 
   <div class="mb-5">
@@ -36,57 +47,172 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="time-line-container mb-10">
     <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
+      title="Associate Consulting Engineer"
+      subtitle="Dec 2024 - Present at Silex Data Solutions, Memphis, TN"
     >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Spearhead AWS practice development, serving as the primary technical and process resource for the sales organization</li>
+        <li>Provide comprehensive pre-sales support across Tennessee, managing scoping, RFX responses, and technical solution design for two account executives</li>
+        <li>Recognized with Employee of the Quarter award within first year of employment</li>
+        <li>Rapidly acquired 28+ professional certifications across AWS, Red Hat, Splunk, and Cohesity platforms</li>
+      </ul>
+      <p class="mt-2"><strong>Focus Areas:</strong> Red Hat Products, Linux, AI, Cybersecurity, Cloud (AWS)</p>
+    </TimeLineElement>
+
+    <TimeLineElement
+      title="InfoSec Technical Supervisor & Project Coordinator"
+      subtitle="Apr 2024 - Dec 2024 at UMRF Ventures, Memphis, TN"
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Directed creation of security alerts in Splunk and CrowdStrike; led Python development projects leveraging ML/AI to analyze security logs in GCP</li>
+        <li>Managed stakeholder communications to drive project development and meet enterprise security demands</li>
+        <li>Provided coaching and training for new InfoSec team members</li>
+        <li>Participated in SAFe Agile training and PI planning with client teams</li>
+        <li>Standardized documentation on SharePoint wiki as single source of team knowledge</li>
+      </ul>
+    </TimeLineElement>
+
+    <TimeLineElement
+      title="InfoSec Data Scientist"
+      subtitle="Dec 2023 - Apr 2024 at UMRF Ventures, Memphis, TN"
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Utilized Splunk Cloud to generate alerts and dashboards from diverse security data sources</li>
+        <li>Interpreted MITRE ATT&CK framework to develop comprehensive Splunk detection rules</li>
+        <li>Performed GRC analyst functions analyzing SOC2 Type 2 and SIG questionnaires</li>
+      </ul>
+    </TimeLineElement>
+
+    <TimeLineElement
+      title="IAM Analyst / Ops Shift Lead"
+      subtitle="Aug 2023 - Nov 2023 at UMRF Ventures, Memphis, TN"
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Managed user roles, policies, and access in Active Roles and via PowerShell scripts</li>
+        <li>Resolved ServiceNow tickets with thorough documentation; coordinated remediation efforts</li>
+      </ul>
+    </TimeLineElement>
+
+    <TimeLineElement
+      title="Homelab Administrator"
+      subtitle="2023 - Present | Personal Project"
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Built multi-node Proxmox cluster hosting Linux containers and VMs</li>
+        <li>Configured OPNSense for secure dual-stack network with firewall, VLANs, and VPN</li>
+        <li>Implemented data recovery plan with NAS backup to Backblaze B2</li>
+        <li>Managed DNS, SSL certificates, and WAF via CloudFlare</li>
+        <li>Automated system updates across Linux hosts using Ansible</li>
+      </ul>
+    </TimeLineElement>
+
+    <TimeLineElement
+      title="Studio Manager / Instructor"
+      subtitle="Sep 2020 - Jan 2023 at Summer Ave. Art & Clay, Memphis, TN"
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Integrated business systems using Zapier and Integromat (Square POS, scheduling software, Google Calendar)</li>
+        <li>Implemented SEO optimization and Google Analytics; managed online marketing integrations</li>
+        <li>Developed Excel automation solutions to streamline ordering processes</li>
+      </ul>
+    </TimeLineElement>
+  </div>
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Education</div>
+  </div>
+
+  <div class="time-line-container grid gap-4 mb-10">
+    <TimeLineElement
+      title="Graduate Certificate in Business Project Management"
+      subtitle="2024 - 2025 at Fogelman College of Business & Economics, University of Memphis"
+    />
+    <TimeLineElement
+      title="Bachelor of Business Administration - Business Information Technology"
+      subtitle="2023 - 2024 at Fogelman College of Business & Economics, University of Memphis | GPA: 3.8"
+    >
+      MILE Leadership Program
     </TimeLineElement>
     <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
-    >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-    </TimeLineElement>
-    <TimeLineElement
-      title="Job Title at Project or Company Name"
-      subtitle="From [Start Date] to [End Date] at [Company], [City], [Country]"
-    >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-    </TimeLineElement>
+      title="Associate of Science - Business Administration"
+      subtitle="Dec 2022 at Southwest Tennessee Community College"
+    />
   </div>
 
   <div class="mb-5">
     <div class="text-3xl w-full font-bold">Certifications</div>
   </div>
 
-  <ul class="list-disc mx-6 mb-10 grid gap-2">
-    <li>
-      <a href="#" target="_blank"> Certification Name (with link)</a>
-    </li>
-    <li>
-      <a href="#" target="_blank"> Certification Name (with link)</a>
-    </li>
-  </ul>
+  <div class="mb-2">
+    <a href="https://www.credly.com/users/john-dorion.c2a33719/badges" target="_blank" class="btn btn-primary btn-sm">
+      View All Badges on Credly
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+    <div>
+      <h4 class="font-bold text-lg mb-2">Cloud</h4>
+      <ul class="list-disc mx-6 grid gap-1">
+        <li><strong>AWS Certified Cloud Practitioner</strong> - Amazon Web Services</li>
+        <li><strong>AWS Solutions Architect Associate</strong> - In Progress (Scheduled)</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-2">Red Hat</h4>
+      <ul class="list-disc mx-6 grid gap-1">
+        <li>Red Hat Enterprise Linux: Seller & Technical Seller</li>
+        <li>Red Hat OpenShift: Technical Seller</li>
+        <li>Red Hat Ansible Automation Platform: Seller</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-2">Security & Data</h4>
+      <ul class="list-disc mx-6 grid gap-1">
+        <li><strong>Splunk Accredited Security SE I</strong> (Partner)</li>
+        <li>Cohesity Data Cloud Technical Sales Associate</li>
+      </ul>
+    </div>
+  </div>
 
   <div class="mb-5">
     <div class="text-3xl w-full font-bold">Skills</div>
   </div>
 
-  <ul class="list-disc md:columns-5 columns-2 mx-6">
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
-    <li>Skill Name</li>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+    <div>
+      <h4 class="font-bold mb-2">Security</h4>
+      <p class="text-sm">CrowdStrike Falcon, Splunk Enterprise Security, SIEM, MITRE ATT&CK, CTF, SOC2, GRC</p>
+    </div>
+    <div>
+      <h4 class="font-bold mb-2">Cloud & Infrastructure</h4>
+      <p class="text-sm">AWS, GCP, Red Hat Enterprise Linux, Proxmox, OPNSense, Ansible, Docker</p>
+    </div>
+    <div>
+      <h4 class="font-bold mb-2">Development</h4>
+      <p class="text-sm">Python, PowerShell, ML/AI, API Integration, Automation</p>
+    </div>
+    <div>
+      <h4 class="font-bold mb-2">Networking</h4>
+      <p class="text-sm">VLANs, VPN, Firewalls, DNS, SSL/TLS, WAF, CloudFlare</p>
+    </div>
+  </div>
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Volunteering</div>
+  </div>
+
+  <div class="mb-10">
+    <h4 class="font-semibold">English Language Volunteer - ENGin</h4>
+    <p class="text-sm text-gray-500">Feb 2023 - May 2024</p>
+    <p class="mt-1">Taught conversational English to Ukrainian refugees, developing cross-cultural communication skills.</p>
+  </div>
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Languages</div>
+  </div>
+
+  <ul class="list-disc mx-6 mb-10">
+    <li><strong>English</strong> - Native</li>
+    <li><strong>Dutch</strong> - Professional Working Proficiency</li>
   </ul>
 </BaseLayout>
