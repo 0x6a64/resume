@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Rebuild Sharp for Linux
-        run: pnpm rebuild sharp
+      - name: Install Sharp for Linux
+        run: pnpm add sharp --force
 
       - name: Build site
         run: pnpm run build
