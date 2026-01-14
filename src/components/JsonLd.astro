@@ -1,0 +1,54 @@
+---
+export interface Props {
+  type: 'WebSite' | 'Person' | 'Article' | 'BreadcrumbList';
+  data?: Record<string, unknown>;
+}
+
+const { type, data = {} } = Astro.props;
+const siteUrl = Astro.site?.toString() || 'https://johndorion.com';
+
+// Base schemas
+const schemas: Record<string, Record<string, unknown>> = {
+  WebSite: {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'John Dorion',
+    url: siteUrl,
+    description: 'IT Specialist & Security Enthusiast',
+  },
+  Person: {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'John Dorion',
+    url: siteUrl,
+    jobTitle: 'IT Specialist',
+    description: 'IT Specialist with expertise in Linux, security, and system administration.',
+    sameAs: [
+      'https://www.linkedin.com/in/john-dorion',
+      'https://github.com/john-dorion'
+    ],
+  },
+  Article: {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    author: {
+      '@type': 'Person',
+      name: 'John Dorion',
+      url: siteUrl,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'John Dorion',
+      url: siteUrl,
+    },
+  },
+  BreadcrumbList: {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+  },
+};
+
+const schema = { ...schemas[type], ...data };
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
