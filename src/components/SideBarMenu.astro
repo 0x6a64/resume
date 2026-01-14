@@ -30,13 +30,10 @@ function updateActiveMenuItem() {
   else if (path.startsWith('/pottery')) activeId = 'pottery';
 
   const activeItemElem = document.getElementById(activeId);
-  activeItemElem && activeItemElem.classList.add(activeClass);
+  if (activeItemElem) activeItemElem.classList.add(activeClass);
 }
 
-// Run on initial load
-updateActiveMenuItem();
-
-// Add listener only once to prevent accumulation
+// Add listener only once - astro:page-load fires on initial load AND view transitions
 if (!(window as any)[MENU_LISTENER_KEY]) {
   (window as any)[MENU_LISTENER_KEY] = true;
   document.addEventListener('astro:page-load', updateActiveMenuItem);

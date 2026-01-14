@@ -114,7 +114,7 @@ images.sort((a, b) => a.label.localeCompare(b.label));
             height={image.src.height}
             format="webp"
             quality={80}
-            loading={index < 12 ? "eager" : "lazy"}
+            loading={index < 4 ? "eager" : "lazy"}
           />
         </a>
         <span class="label">{image.label}</span>
@@ -124,77 +124,105 @@ images.sort((a, b) => a.label.localeCompare(b.label));
 
   <script>
     // Fancybox loaded lazily on first gallery click
-    let fancyboxLoaded = false;
+    // Use Promise pattern to handle race conditions on rapid clicks
+    let fancyboxLoadPromise: Promise<void> | null = null;
     let FancyboxModule: typeof import("@fancyapps/ui").Fancybox | null = null;
+
+    // AbortController for cleaning up event listeners on navigation
+    let galleryAbortController: AbortController | null = null;
+    let sidebarAbortController: AbortController | null = null;
 
     // Shared sidebar state management
     function getSidebarCollapsed(): boolean {
-      return sessionStorage.getItem('sidebar-collapsed') === 'true';
+      try {
+        return sessionStorage.getItem('sidebar-collapsed') === 'true';
+      } catch {
+        return false;
+      }
     }
 
     function setSidebarCollapsed(collapsed: boolean): void {
-      sessionStorage.setItem('sidebar-collapsed', collapsed ? 'true' : 'false');
+      try {
+        sessionStorage.setItem('sidebar-collapsed', collapsed ? 'true' : 'false');
+      } catch {
+        // Ignore storage errors (quota exceeded, etc.)
+      }
     }
 
     function applySidebarState(collapsed: boolean): void {
       const drawer = document.querySelector('.drawer');
+      if (!drawer) return; // Early return if drawer not found
+
       const toggleBtn = document.getElementById('sidebar-toggle');
       const toggleText = toggleBtn?.querySelector('.toggle-text');
 
       if (collapsed) {
-        drawer?.classList.add('sidebar-collapsed');
+        drawer.classList.add('sidebar-collapsed');
         if (toggleText) toggleText.textContent = 'Show sidebar';
         toggleBtn?.setAttribute('aria-expanded', 'false');
       } else {
-        drawer?.classList.remove('sidebar-collapsed');
+        drawer.classList.remove('sidebar-collapsed');
         if (toggleText) toggleText.textContent = 'Hide sidebar';
         toggleBtn?.setAttribute('aria-expanded', 'true');
       }
     }
 
     async function loadFancybox(): Promise<void> {
-      if (fancyboxLoaded) return;
-      fancyboxLoaded = true;
+      // Use Promise pattern to handle concurrent calls (rapid clicks)
+      if (fancyboxLoadPromise) return fancyboxLoadPromise;
 
-      // Dynamically load CSS from CDN
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css';
-      document.head.appendChild(link);
+      fancyboxLoadPromise = (async () => {
+        // Dynamically load CSS from CDN
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css';
+        document.head.appendChild(link);
 
-      // Wait for CSS to load before initializing
-      await new Promise<void>((resolve) => {
-        link.onload = () => resolve();
-        link.onerror = () => resolve(); // Continue even if CSS fails
-      });
+        // Wait for CSS to load before initializing
+        await new Promise<void>((resolve) => {
+          link.onload = () => resolve();
+          link.onerror = () => resolve(); // Continue even if CSS fails
+        });
 
-      // Dynamically import JS
-      const { Fancybox } = await import("@fancyapps/ui");
-      FancyboxModule = Fancybox;
+        // Dynamically import JS with error handling
+        try {
+          const { Fancybox } = await import("@fancyapps/ui");
+          FancyboxModule = Fancybox;
 
-      // Bind to gallery elements
-      Fancybox.bind('[data-fancybox="gallery"]', {
-        Thumbs: false,
-        Toolbar: {
-          display: {
-            left: [],
-            middle: [],
-            right: ["close"],
-          },
-        },
-        Images: { zoom: true },
-        Carousel: { transition: "slide" },
-        on: {
-          close: () => {
-            applySidebarState(getSidebarCollapsed());
-          }
+          // Bind to gallery elements
+          Fancybox.bind('[data-fancybox="gallery"]', {
+            Thumbs: false,
+            Toolbar: {
+              display: {
+                left: [],
+                middle: [],
+                right: ["close"],
+              },
+            },
+            Images: { zoom: true },
+            Carousel: { transition: "slide" },
+            on: {
+              close: () => {
+                applySidebarState(getSidebarCollapsed());
+              }
+            }
+          });
+        } catch (err) {
+          console.warn('Failed to load Fancybox:', err);
+          fancyboxLoadPromise = null; // Reset so user can retry
         }
-      });
+      })();
+
+      return fancyboxLoadPromise;
     }
 
     function initGalleryClickHandler(): void {
       const gallery = document.getElementById('gallery');
       if (!gallery) return;
+
+      // Abort any existing controller before creating new one
+      galleryAbortController?.abort();
+      galleryAbortController = new AbortController();
 
       gallery.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement;
@@ -202,21 +230,30 @@ images.sort((a, b) => a.label.localeCompare(b.label));
         if (!link) return;
 
         // If Fancybox not loaded yet, load it and then trigger the click
-        if (!fancyboxLoaded) {
+        if (!fancyboxLoadPromise) {
           e.preventDefault();
           await loadFancybox();
-          // Re-trigger the click after loading
-          (link as HTMLElement).click();
+          // Re-trigger the click after loading (if Fancybox loaded successfully)
+          if (FancyboxModule) {
+            (link as HTMLElement).click();
+          }
         }
-      });
+      }, { signal: galleryAbortController.signal });
     }
 
     function cleanupFancybox(): void {
+      // Abort event listeners
+      galleryAbortController?.abort();
+      galleryAbortController = null;
+      sidebarAbortController?.abort();
+      sidebarAbortController = null;
+
+      // Cleanup Fancybox
       if (FancyboxModule) {
         FancyboxModule.destroy();
         FancyboxModule = null;
       }
-      fancyboxLoaded = false;
+      fancyboxLoadPromise = null;
     }
 
     function initSidebarToggle(): void {
@@ -226,22 +263,22 @@ images.sort((a, b) => a.label.localeCompare(b.label));
       // Restore saved state on init
       applySidebarState(getSidebarCollapsed());
 
-      // Remove any existing listeners by cloning
-      if (toggleBtn && toggleBtn.parentNode) {
-        const newBtn = toggleBtn.cloneNode(true) as HTMLElement;
-        toggleBtn.parentNode.replaceChild(newBtn, toggleBtn);
+      if (!toggleBtn) return;
 
-        newBtn.addEventListener('click', () => {
-          if (!drawer) return;
-          const isCollapsed = drawer.classList.toggle('sidebar-collapsed');
-          setSidebarCollapsed(isCollapsed);
-          newBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
-          const toggleText = newBtn.querySelector('.toggle-text');
-          if (toggleText) {
-            toggleText.textContent = isCollapsed ? 'Show sidebar' : 'Hide sidebar';
-          }
-        });
-      }
+      // Abort any existing controller before creating new one
+      sidebarAbortController?.abort();
+      sidebarAbortController = new AbortController();
+
+      toggleBtn.addEventListener('click', () => {
+        if (!drawer) return;
+        const isCollapsed = drawer.classList.toggle('sidebar-collapsed');
+        setSidebarCollapsed(isCollapsed);
+        toggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+        const toggleText = toggleBtn.querySelector('.toggle-text');
+        if (toggleText) {
+          toggleText.textContent = isCollapsed ? 'Show sidebar' : 'Hide sidebar';
+        }
+      }, { signal: sidebarAbortController.signal });
     }
 
     // Initialize only via astro:page-load (fires on initial load + View Transitions)

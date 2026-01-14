@@ -199,14 +199,13 @@ export function initLogoAnimation(): void {
       clearTimeout(resizeDebounceTimer);
     }
     resizeDebounceTimer = setTimeout(() => {
+      // Guard against callback firing after cleanup
+      if (playground.dataset.initialized !== 'true') return;
       cachedRect = playground.getBoundingClientRect();
       resizeDebounceTimer = null;
     }, 100);
   });
   resizeObserver.observe(playground);
-
-  // Setup visibility change listener
-  document.addEventListener('visibilitychange', handleVisibilityChange);
 
   // Try to restore saved state
   let savedStateJson: string | null = null;
@@ -225,7 +224,8 @@ export function initLogoAnimation(): void {
       savedState.particles.slice(0, particleCount).forEach(state => {
         particles.push(createParticleFromState(playground, state));
       });
-      sessionStorage.removeItem(STORAGE_KEY);
+      // Don't remove state immediately - keep for browser refresh
+      // State will be overwritten by new animation loop anyway
     } catch {
       sessionStorage.removeItem(STORAGE_KEY);
     }
@@ -310,11 +310,15 @@ export function initLogoAnimation(): void {
   }
 
   // Store resume callback for visibility change handling
+  // Must be set BEFORE adding visibility listener to avoid race condition
   resumeAnimationCallback = () => {
     if (animationFrameId === null) {
       animationFrameId = requestAnimationFrame(animate);
     }
   };
+
+  // Setup visibility change listener after callback is ready
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
   animationFrameId = requestAnimationFrame(animate);
 }
@@ -365,6 +369,7 @@ export function cleanupAnimation(): void {
   lastFrameTime = 0;
   isAnimationPaused = false;
   resumeAnimationCallback = null;
+  listenersAttached = false;
 
   // Clear initialized flag from playground element
   const playground = document.getElementById('logo-playground');

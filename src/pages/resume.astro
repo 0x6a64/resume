@@ -291,4 +291,10 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     font-weight: 500;
     margin: 0;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-card-inner {
+      transition: none;
+    }
+  }
 </style>

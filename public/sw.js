@@ -85,11 +85,16 @@ async function trimCache(cacheName) {
     let currentSize = totalSize;
     for (const request of keys) {
       if (currentSize <= MAX_CACHE_BYTES * 0.8) break; // Target 80% of limit
-      const response = await cache.match(request);
-      if (response) {
-        const size = await getResponseSize(response);
-        await cache.delete(request);
-        currentSize -= size;
+      try {
+        const response = await cache.match(request);
+        if (response) {
+          const size = await getResponseSize(response);
+          await cache.delete(request);
+          currentSize -= size;
+        }
+      } catch (err) {
+        // Continue trimming even if individual delete fails
+        console.warn('Cache trim error for item:', err);
       }
     }
   }
@@ -109,6 +114,10 @@ async function cacheWithLimit(request, response) {
   await cache.put(request, response);
 
   // Debounce trim - only run every N writes
+  // Intentional fire-and-forget: trimCache runs asynchronously without blocking
+  // the cache write. This provides eventual consistency - cache may temporarily
+  // exceed limits but will be trimmed on the next trigger. This is acceptable
+  // for a portfolio site where exact cache limits aren't critical.
   cacheWriteCount++;
   if (cacheWriteCount >= TRIM_DEBOUNCE_COUNT) {
     cacheWriteCount = 0;
@@ -184,11 +193,15 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cached) => {
       if (cached) {
         // Return cached and update in background (stale-while-revalidate)
+        // Intentional fire-and-forget pattern: We don't await the cache update
+        // because we want to return the cached response immediately. If the SW
+        // terminates before the update completes, it's acceptable - the user
+        // still got their content and we'll retry on the next visit.
         fetch(request).then((response) => {
           if (response.ok) {
             cacheWithLimit(request, response);
           }
-        }).catch(() => {});
+        }).catch((err) => console.warn('Background cache update failed:', err));
         return cached;
       }
 
