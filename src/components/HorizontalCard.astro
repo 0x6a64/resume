@@ -30,7 +30,16 @@ const resolvedImg = typeof img === 'string' && img.startsWith('/')
   <a href={url} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined}>
     <div class="hero-content flex-col md:flex-row">
       {
-        resolvedImg && (
+        resolvedImg && typeof resolvedImg === 'string' ? (
+          <img
+            src={resolvedImg}
+            width={750}
+            height={422}
+            loading="lazy"
+            alt={title}
+            class="max-w-full md:max-w-[13rem] rounded-lg"
+          />
+        ) : resolvedImg && (
           <Image
             src={resolvedImg}
             width={750}
