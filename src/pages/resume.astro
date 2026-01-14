@@ -18,25 +18,46 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-    <div class="card bg-base-200 shadow-xl">
-      <div class="card-body items-center text-center p-4">
-        <div class="text-4xl mb-2">🏆</div>
-        <h3 class="card-title text-sm">Tech 901 CTF</h3>
-        <p class="text-primary font-bold">1st Place 2024 & 2025</p>
+    <div class="flip-card">
+      <div class="flip-card-inner">
+        <div class="flip-card-front card bg-base-200 shadow-xl">
+          <div class="card-body items-center justify-center text-center p-6">
+            <div class="text-4xl">🏆</div>
+            <h3 class="card-title text-sm mt-2">Tech 901 CTF</h3>
+            <p class="text-primary font-bold">1st Place 2024 & 2025</p>
+          </div>
+        </div>
+        <div class="flip-card-back shadow-xl rounded-2xl">
+          <p>Back-to-back winner of Memphis Tech 901's annual capture-the-flag competition</p>
+        </div>
       </div>
     </div>
-    <div class="card bg-base-200 shadow-xl">
-      <div class="card-body items-center text-center p-4">
-        <div class="text-4xl mb-2">📜</div>
-        <h3 class="card-title text-sm">Professional Credentials</h3>
-        <p class="text-primary font-bold">28+ Certifications</p>
+    <div class="flip-card">
+      <div class="flip-card-inner">
+        <div class="flip-card-front card bg-base-200 shadow-xl">
+          <div class="card-body items-center justify-center text-center p-6">
+            <div class="text-4xl">📜</div>
+            <h3 class="card-title text-sm mt-2">Professional Credentials</h3>
+            <p class="text-primary font-bold">28+ Certifications</p>
+          </div>
+        </div>
+        <div class="flip-card-back shadow-xl rounded-2xl">
+          <p>Splunk Security SE, AWS Cloud Practitioner, and Red Hat credentials</p>
+        </div>
       </div>
     </div>
-    <div class="card bg-base-200 shadow-xl">
-      <div class="card-body items-center text-center p-4">
-        <div class="text-4xl mb-2">🛡️</div>
-        <h3 class="card-title text-sm">Raymond James CTF</h3>
-        <p class="text-primary font-bold">Participant</p>
+    <div class="flip-card">
+      <div class="flip-card-inner">
+        <div class="flip-card-front card bg-base-200 shadow-xl">
+          <div class="card-body items-center justify-center text-center p-6">
+            <div class="text-4xl">🛡️</div>
+            <h3 class="card-title text-sm mt-2">Raymond James CTF</h3>
+            <p class="text-primary font-bold">Participant</p>
+          </div>
+        </div>
+        <div class="flip-card-back shadow-xl rounded-2xl">
+          <p>Competed in Raymond James Financial's national cybersecurity competition</p>
+        </div>
       </div>
     </div>
   </div>
@@ -157,7 +178,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="mb-2">
-    <a href="https://www.credly.com/users/john-dorion.c2a33719/badges" target="_blank" class="btn btn-primary btn-sm">
+    <a href="https://www.credly.com/users/john-dorion.c2a33719/badges" target="_blank" class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content hover:border-primary transition-colors btn-sm">
       View All Badges on Credly
     </a>
   </div>
@@ -225,3 +246,49 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <li><strong>Dutch</strong> - Professional Working Proficiency</li>
   </ul>
 </BaseLayout>
+
+<style>
+  .flip-card {
+    perspective: 1000px;
+    height: 140px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #C8B482;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .flip-card-back p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-weight: 500;
+    margin: 0;
+  }
+</style>
