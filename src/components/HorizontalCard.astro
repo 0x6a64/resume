@@ -12,8 +12,16 @@ export interface Props {
   target?: "_blank" | "_self";
 }
 
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
 const { title, img, desc, url, badge, tags, target = "_blank" } = Astro.props;
 const tagUrl = url.split("/").slice(0, -1).join("/") + "/tag";
+
+// Prepend base URL to string image paths that start with /
+const resolvedImg = typeof img === 'string' && img.startsWith('/')
+  ? base + img.slice(1)
+  : img;
 ---
 
 <div
@@ -22,9 +30,9 @@ const tagUrl = url.split("/").slice(0, -1).join("/") + "/tag";
   <a href={url} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined}>
     <div class="hero-content flex-col md:flex-row">
       {
-        img && (
+        resolvedImg && (
           <Image
-            src={img}
+            src={resolvedImg}
             width={750}
             height={422}
             format="webp"

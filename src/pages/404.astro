@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
 ---
 
 <BaseLayout title="404: Not Found" includeSidebar={false}>
@@ -24,7 +27,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <h1 class="text-9xl font-bold mb-2 text-accent">404</h1>
       <h3 class="text-2xl mb-2">Looks like this page wandered off.</h3>
       <p class="text-base-content/60 mb-8">Maybe it's out making pottery somewhere.</p>
-      <a class="btn btn-accent" href="/">Take me home</a>
+      <a class="btn btn-accent" href={base}>Take me home</a>
     </div>
   </div>
 </BaseLayout>

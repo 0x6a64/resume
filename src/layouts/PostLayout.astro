@@ -6,7 +6,15 @@ import { Image } from "astro:assets";
 
 export interface Props extends BlogSchema {}
 
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
+
 const { title, description, pubDate, updatedDate, heroImage, badge, tags = [] } = Astro.props;
+
+// Prepend base URL to heroImage if it's a root-relative path
+const resolvedHeroImage = typeof heroImage === 'string' && heroImage.startsWith('/')
+  ? base + heroImage.slice(1)
+  : heroImage;
 
 // Format dates using native Intl.DateTimeFormat (zero bundle cost)
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -31,7 +39,7 @@ const articleData = {
   <JsonLd type="Article" data={articleData} />
   <main class="md:flex md:justify-center">
     <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
-      {heroImage && <Image width={750} height={422} format="webp" quality={80} loading="eager" src={heroImage} alt={title} class="w-full mb-6" />}
+      {resolvedHeroImage && <Image width={750} height={422} format="webp" quality={80} loading="eager" src={resolvedHeroImage} alt={title} class="w-full mb-6" />}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}
       <br />
@@ -39,7 +47,7 @@ const articleData = {
       {
         tags &&
           tags.map((tag) => (
-            <a href={`/blog/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
+            <a href={`${base}blog/tag/${tag}`} class="badge badge-outline ml-2 no-underline">
               {tag}
             </a>
           ))
