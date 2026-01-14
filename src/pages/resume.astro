@@ -307,25 +307,42 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 </style>
 
 <script>
-  // Flip cards on scroll for mobile devices
-  if (window.innerWidth < 768) {
+  function initFlipCards() {
+    // Only run on mobile
+    if (window.innerWidth >= 768) return;
+
     const flipCards = document.querySelectorAll('.flip-card');
 
+    // Remove any existing 'in-view' classes first
+    flipCards.forEach(card => card.classList.remove('in-view'));
+
     const observerOptions = {
-      threshold: 0.5, // Trigger when 50% of the card is visible
-      rootMargin: '0px'
+      threshold: 0.6, // Trigger when 60% of the card is visible
+      rootMargin: '-50px 0px' // Only trigger when card is well into viewport
     };
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          // Optional: unobserve after flipping once
-          observer.unobserve(entry.target);
+          // Add a small stagger based on card position
+          const cards = Array.from(flipCards);
+          const index = cards.indexOf(entry.target);
+          setTimeout(() => {
+            entry.target.classList.add('in-view');
+          }, index * 150); // 150ms delay between each card
+        } else {
+          // Remove the class when card leaves viewport
+          entry.target.classList.remove('in-view');
         }
       });
     }, observerOptions);
 
     flipCards.forEach(card => observer.observe(card));
   }
+
+  // Run on initial page load
+  initFlipCards();
+
+  // Re-run when navigating via View Transitions
+  document.addEventListener('astro:page-load', initFlipCards);
 </script>
