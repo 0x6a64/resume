@@ -107,9 +107,9 @@ images.sort((a, b) => a.label.localeCompare(b.label));
     {images.map((image, index) => (
       <article class="gallery-item">
         <a
+          href={image.src.src}
           data-fancybox="gallery"
           data-caption={image.label}
-          data-src={image.src.src}
         >
           <Image
             src={image.src}
