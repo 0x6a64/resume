@@ -66,4 +66,52 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 <script>
   import { setupAnimationEvents } from '../scripts/logoAnimation';
   setupAnimationEvents();
+
+  // Add swipe gesture to open sidebar on mobile
+  function initSwipeGesture() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const minSwipeDistance = 50; // Minimum distance for a swipe
+    const maxVerticalDistance = 100; // Maximum vertical movement allowed
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const horizontalDistance = touchEndX - touchStartX;
+      const verticalDistance = Math.abs(touchEndY - touchStartY);
+
+      // Only trigger on mobile screens
+      if (window.innerWidth >= 1024) return;
+
+      // Swipe right from left edge (open sidebar)
+      if (
+        touchStartX < 50 && // Started near left edge
+        horizontalDistance > minSwipeDistance && // Swiped right enough
+        verticalDistance < maxVerticalDistance // Mostly horizontal swipe
+      ) {
+        const drawer = document.getElementById('my-drawer') as HTMLInputElement;
+        if (drawer && !drawer.checked) {
+          drawer.checked = true;
+        }
+      }
+    }
+  }
+
+  // Initialize on page load
+  initSwipeGesture();
+
+  // Re-initialize on View Transitions navigation
+  document.addEventListener('astro:page-load', initSwipeGesture);
 </script>
