@@ -2,7 +2,7 @@
 import SideBarFooter from "./SideBarFooter.astro";
 import { Image } from "astro:assets";
 import SideBarMenu from "./SideBarMenu.astro";
-const { sideBarActiveItemID } = Astro.props;
+import profileImg from "../images/john-dorion.jpg";
 ---
 
 <div class="drawer-side z-40">
@@ -13,13 +13,13 @@ const { sideBarActiveItemID } = Astro.props;
       <a href="/">
         <div class="avatar transition ease-in-out hover:scale-[102%] block m-auto">
           <div class="w-[8.5rem]">
-            <Image class="mask mask-circle" format="webp" width={300} height={300} src="/john-dorion.jpg" alt="John Dorion" />
+            <Image class="mask mask-circle" format="webp" quality={80} width={300} height={300} src={profileImg} alt="John Dorion" />
           </div>
         </div>
       </a>
     </div>
     <div class="relative z-10">
-      <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
+      <SideBarMenu />
     </div>
     <div class="flex-grow"></div>
     <div class="relative z-10">
