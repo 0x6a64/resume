@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 // Import all images from the pottery folder
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
@@ -39,8 +40,7 @@ images.sort((a, b) => {
     <meta name="description" content="Pottery by John Dorion - Belgian American potter" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Fancybox -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <!-- Fancybox CSS imported via Astro -->
 
     <!-- Inter font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -309,11 +309,11 @@ images.sort((a, b) => {
     </main>
 
     <footer class="site-footer">
-      <p>&copy; 2024 John Dorion. Powered by <a href="https://astro.build">Astro</a>.</p>
+      <p>&copy; {new Date().getFullYear()} John Dorion. Powered by <a href="https://astro.build">Astro</a>.</p>
     </footer>
 
-    <script is:inline src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-    <script is:inline>
+    <script>
+      import { Fancybox } from "@fancyapps/ui";
       Fancybox.bind('[data-fancybox="gallery"]', {
         Thumbs: false,
         Toolbar: {

@@ -36,6 +36,9 @@
             pkgs.nodePackages.typescript
             pkgs.nodePackages.typescript-language-server
 
+            # Nix development tools
+            pkgs.alejandra  # Nix formatter (for .nixd.json)
+
             # Optional: Uncomment as needed
             # pkgs.nodePackages.pnpm    # Alternative package manager
             # pkgs.nodePackages.prettier # Code formatter
