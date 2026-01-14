@@ -196,7 +196,7 @@ images.sort((a, b) => a.label.localeCompare(b.label));
           const { Fancybox } = await import("@fancyapps/ui");
           FancyboxModule = Fancybox;
 
-          // Bind to gallery elements with proper configuration
+          // Bind to gallery elements
           Fancybox.bind('[data-fancybox="gallery"]', {
             Thumbs: false,
             Toolbar: {
@@ -206,14 +206,8 @@ images.sort((a, b) => a.label.localeCompare(b.label));
                 right: ["close"],
               },
             },
-            Images: {
-              zoom: true,
-              protected: true
-            },
-            Carousel: {
-              transition: "slide",
-              infinite: true
-            },
+            Images: { zoom: true },
+            Carousel: { transition: "slide" },
             on: {
               close: () => {
                 applySidebarState(getSidebarCollapsed());
@@ -242,16 +236,15 @@ images.sort((a, b) => a.label.localeCompare(b.label));
         const link = target.closest('[data-fancybox="gallery"]');
         if (!link) return;
 
-        // If Fancybox not loaded yet, prevent default and load it
-        if (!FancyboxModule) {
+        // If Fancybox not loaded yet, load it and then trigger the click
+        if (!fancyboxLoadPromise) {
           e.preventDefault();
           await loadFancybox();
-          // After loading, Fancybox is bound - trigger the click again
+          // Re-trigger the click after loading (if Fancybox loaded successfully and element still in DOM)
           if (FancyboxModule && link instanceof HTMLElement && document.contains(link)) {
             link.click();
           }
         }
-        // Otherwise, Fancybox is already loaded and will handle the click automatically
       }, { signal: galleryAbortController.signal });
     }
 
@@ -423,22 +416,6 @@ images.sort((a, b) => a.label.localeCompare(b.label));
     font-size: 1rem;
     padding: 1rem;
     text-align: center;
-  }
-
-  /* Remove white border and ensure proper image sizing */
-  :global(.fancybox__slide) {
-    padding: 0;
-  }
-
-  :global(.fancybox__content) {
-    background: transparent;
-    padding: 0;
-  }
-
-  :global(.fancybox__image) {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
   }
 
   @media (prefers-reduced-motion: reduce) {
