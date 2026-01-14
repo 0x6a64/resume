@@ -67,7 +67,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
   import { setupAnimationEvents } from '../scripts/logoAnimation';
   setupAnimationEvents();
 
-  // Add swipe gesture to open sidebar on mobile
+  // Add swipe gesture to open/close sidebar on mobile
   function initSwipeGesture() {
     let touchStartX = 0;
     let touchStartY = 0;
@@ -76,6 +76,7 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 
     const minSwipeDistance = 50; // Minimum distance for a swipe
     const maxVerticalDistance = 100; // Maximum vertical movement allowed
+    const leftEdgeThreshold = 120; // Increased from 50px for easier access
 
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
@@ -91,20 +92,29 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     function handleSwipe() {
       const horizontalDistance = touchEndX - touchStartX;
       const verticalDistance = Math.abs(touchEndY - touchStartY);
+      const drawer = document.getElementById('my-drawer') as HTMLInputElement;
 
       // Only trigger on mobile screens
       if (window.innerWidth >= 1024) return;
+      if (!drawer) return;
 
       // Swipe right from left edge (open sidebar)
       if (
-        touchStartX < 50 && // Started near left edge
+        touchStartX < leftEdgeThreshold && // Started near left edge
         horizontalDistance > minSwipeDistance && // Swiped right enough
-        verticalDistance < maxVerticalDistance // Mostly horizontal swipe
+        verticalDistance < maxVerticalDistance && // Mostly horizontal swipe
+        !drawer.checked // Sidebar is closed
       ) {
-        const drawer = document.getElementById('my-drawer') as HTMLInputElement;
-        if (drawer && !drawer.checked) {
-          drawer.checked = true;
-        }
+        drawer.checked = true;
+      }
+
+      // Swipe left to close sidebar (from anywhere when sidebar is open)
+      if (
+        horizontalDistance < -minSwipeDistance && // Swiped left enough
+        verticalDistance < maxVerticalDistance && // Mostly horizontal swipe
+        drawer.checked // Sidebar is open
+      ) {
+        drawer.checked = false;
       }
     }
   }
