@@ -29,6 +29,9 @@
             pkgs.vips
             pkgs.pkg-config
 
+            # Required for node-gyp (native module compilation)
+            pkgs.python3
+
             # Development tools
             pkgs.nodePackages.typescript
             pkgs.nodePackages.typescript-language-server
