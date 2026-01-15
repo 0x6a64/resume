@@ -163,7 +163,20 @@ images.sort((a, b) => a.label.localeCompare(b.label));
 
     function applySidebarState(collapsed: boolean): void {
       const drawer = document.querySelector('.drawer');
-      if (!drawer) return; // Early return if drawer not found
+      if (!drawer) {
+        if (import.meta.env.DEV) {
+          console.warn('applySidebarState: Drawer element not found');
+        }
+        return; // Early return if drawer not found
+      }
+
+      // Verify drawer is still in the DOM
+      if (!document.contains(drawer)) {
+        if (import.meta.env.DEV) {
+          console.warn('applySidebarState: Drawer element is detached from DOM');
+        }
+        return;
+      }
 
       const toggleBtn = document.getElementById('sidebar-toggle');
       const toggleText = toggleBtn?.querySelector('.toggle-text');
@@ -277,6 +290,10 @@ images.sort((a, b) => a.label.localeCompare(b.label));
 
       // Early returns before any operations
       if (!drawer || !toggleBtn) {
+        if (import.meta.env.DEV) {
+          if (!drawer) console.warn('initSidebarToggle: Drawer element not found');
+          if (!toggleBtn) console.warn('initSidebarToggle: Toggle button not found');
+        }
         // Still apply saved state if drawer exists (even without toggle button)
         if (drawer) applySidebarState(getSidebarCollapsed());
         return;
@@ -290,7 +307,12 @@ images.sort((a, b) => a.label.localeCompare(b.label));
       sidebarAbortController = new AbortController();
 
       toggleBtn.addEventListener('click', () => {
-        if (!drawer) return;
+        if (!drawer || !document.contains(drawer)) {
+          if (import.meta.env.DEV) {
+            console.warn('Sidebar toggle click: Drawer not available');
+          }
+          return;
+        }
         const isCollapsed = drawer.classList.toggle('sidebar-collapsed');
         setSidebarCollapsed(isCollapsed);
         toggleBtn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');

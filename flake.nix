@@ -23,7 +23,7 @@
             pkgs.nodejs_22
 
             # Package managers
-            pkgs.nodePackages.npm
+            pkgs.nodePackages.pnpm
 
             # Required for sharp (Astro image optimization)
             pkgs.vips
@@ -40,30 +40,29 @@
             pkgs.alejandra  # Nix formatter (for .nixd.json)
 
             # Optional: Uncomment as needed
-            # pkgs.nodePackages.pnpm    # Alternative package manager
             # pkgs.nodePackages.prettier # Code formatter
           ];
 
           shellHook = ''
             echo "Astro development environment loaded"
             echo "Node.js version: $(node --version)"
-            echo "npm version: $(npm --version)"
+            echo "pnpm version: $(pnpm --version)"
 
-            # Set up npm to use local node_modules/.bin
+            # Set up pnpm to use local node_modules/.bin
             export PATH="$PWD/node_modules/.bin:$PATH"
 
             # Install dependencies if package.json exists and node_modules doesn't
             if [ -f package.json ] && [ ! -d node_modules ]; then
               echo ""
               echo "Installing dependencies..."
-              npm install
+              pnpm install
             fi
 
             echo ""
             echo "Commands available:"
-            echo "  npm run dev     - Start development server"
-            echo "  npm run build   - Build for production"
-            echo "  npm run preview - Preview production build"
+            echo "  pnpm dev     - Start development server"
+            echo "  pnpm build   - Build for production"
+            echo "  pnpm preview - Preview production build"
           '';
         };
       }

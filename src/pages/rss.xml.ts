@@ -7,6 +7,8 @@ import createSlug from "../lib/createSlug";
 export async function GET(_context: APIContext): Promise<Response> {
   try {
     const blog = await getCollection("blog");
+    const rawBase = import.meta.env.BASE_URL;
+    const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
     return rss({
       title: SITE_TITLE,
       description: SITE_DESCRIPTION,
@@ -15,7 +17,7 @@ export async function GET(_context: APIContext): Promise<Response> {
         title: post.data.title,
         pubDate: post.data.pubDate,
         description: post.data.description,
-        link: `/blog/${createSlug(post.data.title, post.id)}/`,
+        link: `${base}blog/${createSlug(post.data.title, post.id)}/`,
       })),
     });
   } catch (error) {

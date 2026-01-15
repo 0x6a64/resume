@@ -23,6 +23,9 @@ export async function getStaticPaths({ paginate }) {
 
 const { page } = Astro.props;
 const params = Astro.params;
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 ---
 
 <BaseLayout title={"Blog - " + params.tag}>
@@ -43,7 +46,7 @@ const params = Astro.params;
               title={post.data.title}
               img={post.data.heroImage}
               desc={post.data.description}
-              url={"/blog/" + createSlug(post.data.title, post.id)}
+              url={`${base}blog/${createSlug(post.data.title, post.id)}`}
               target="_self"
               badge={post.data.badge}
               tags={post.data.tags}

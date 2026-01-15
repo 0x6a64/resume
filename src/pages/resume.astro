@@ -265,9 +265,10 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     transform-style: preserve-3d;
   }
 
-  /* Desktop: flip on hover */
+  /* Desktop: flip on hover or keyboard interaction */
   @media (min-width: 768px) {
-    .flip-card:hover .flip-card-inner {
+    .flip-card:hover .flip-card-inner,
+    .flip-card.flipped .flip-card-inner {
       transform: rotateY(180deg);
     }
   }
@@ -277,6 +278,17 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     .flip-card.flipped .flip-card-inner {
       transform: rotateY(180deg);
     }
+  }
+
+  /* Keyboard focus styles */
+  .flip-card:focus {
+    outline: 2px solid #C8B482;
+    outline-offset: 4px;
+  }
+
+  .flip-card:focus-visible {
+    outline: 2px solid #C8B482;
+    outline-offset: 4px;
   }
 
   /* Demo flip animation for first card */
@@ -324,20 +336,25 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 </style>
 
 <script>
+  let flipCardsAbortController: AbortController | null = null;
+
   function initFlipCards() {
-    const flipCards = document.querySelectorAll('.flip-card');
+    // Clean up previous event listeners
+    flipCardsAbortController?.abort();
+    flipCardsAbortController = new AbortController();
 
-    // Add click/tap toggle for mobile devices
-    flipCards.forEach(card => {
-      // Remove any existing listeners
-      const newCard = card.cloneNode(true);
-      card.parentNode?.replaceChild(newCard, card);
-    });
-
-    // Re-query after replacing nodes
     const cards = document.querySelectorAll('.flip-card');
 
     cards.forEach((card, index) => {
+      // Make card focusable and accessible
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+
+      // Get the card title for aria-label
+      const titleElement = card.querySelector('.card-title');
+      const title = titleElement?.textContent || 'Achievement card';
+      card.setAttribute('aria-label', `${title} - Press Enter or Space to flip`);
+
       // Add tap/click toggle for touch devices
       card.addEventListener('click', (e) => {
         // Only toggle on mobile or if not hovering
@@ -345,7 +362,15 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
           e.preventDefault();
           card.classList.toggle('flipped');
         }
-      });
+      }, { signal: flipCardsAbortController.signal });
+
+      // Add keyboard navigation support
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.classList.toggle('flipped');
+        }
+      }, { signal: flipCardsAbortController.signal });
 
       // Demo flip on first card on page load
       if (index === 0) {
@@ -365,4 +390,9 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   // Re-run when navigating via View Transitions
   document.addEventListener('astro:page-load', initFlipCards);
+
+  // Clean up on navigation
+  document.addEventListener('astro:before-swap', () => {
+    flipCardsAbortController?.abort();
+  });
 </script>

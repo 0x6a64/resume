@@ -13,7 +13,11 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
 </ul>
 
 <script>
-const MENU_LISTENER_KEY = '__menuListenerAttached';
+declare global {
+  interface Window {
+    __menuListenerAttached?: boolean;
+  }
+}
 
 function updateActiveMenuItem() {
   const activeClass = 'bg-base-300';
@@ -45,8 +49,8 @@ function updateActiveMenuItem() {
 }
 
 // Add listener only once - astro:page-load fires on initial load AND view transitions
-if (!(window as any)[MENU_LISTENER_KEY]) {
-  (window as any)[MENU_LISTENER_KEY] = true;
+if (!window.__menuListenerAttached) {
+  window.__menuListenerAttached = true;
   document.addEventListener('astro:page-load', updateActiveMenuItem);
 }
 </script>

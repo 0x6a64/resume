@@ -67,8 +67,20 @@ const base = rawBase.endsWith('/') ? rawBase : rawBase + '/';
   import { setupAnimationEvents } from '../scripts/logoAnimation';
   setupAnimationEvents();
 
+  declare global {
+    interface Window {
+      __swipeListenerAttached?: boolean;
+    }
+  }
+
   // Add swipe gesture to open/close sidebar on mobile
   function initSwipeGesture() {
+    // Prevent duplicate listener registration
+    if (window.__swipeListenerAttached) {
+      return;
+    }
+    window.__swipeListenerAttached = true;
+
     let touchStartX = 0;
     let touchStartY = 0;
     let touchEndX = 0;
