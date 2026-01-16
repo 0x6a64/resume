@@ -67,8 +67,10 @@
             echo "Commands available:"
             echo "  npm run dev     - Start development server"
             echo "  npm run build   - Build for production"
-            echo "  npm run preview - Preview production build"
+            echo "  npm run preview - Preview production build (Astro)"
             echo "  npm run deploy  - Deploy to Cloudflare Pages"
+            echo ""
+            echo "Note: wrangler dev doesn't work on NixOS (workerd binary issue)"
           '';
         };
       }
