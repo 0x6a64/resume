@@ -175,14 +175,9 @@ images.sort((a, b) => a.label.localeCompare(b.label));
 
     function applySidebarState(collapsed: boolean): void {
       const drawer = document.querySelector('.drawer');
-      if (!drawer) {
-        debugWarn('applySidebarState: Drawer element not found');
-        return; // Early return if drawer not found
-      }
-
-      // Verify drawer is still in the DOM
-      if (!document.contains(drawer)) {
-        debugWarn('applySidebarState: Drawer element is detached from DOM');
+      // Single guard: check if drawer exists and is in DOM
+      if (!drawer || !document.contains(drawer)) {
+        debugWarn('applySidebarState: Drawer not available');
         return;
       }
 
@@ -258,8 +253,9 @@ images.sort((a, b) => a.label.localeCompare(b.label));
               }
             }
           });
-        } catch (err) {
-          debugWarn('Failed to load Fancybox:', err);
+        } catch (err: unknown) {
+          const errorMsg = err instanceof Error ? err.message : String(err);
+          debugWarn('Failed to load Fancybox JavaScript module:', errorMsg);
           fancyboxLoadPromise = null; // Reset so user can retry
         }
       })();
@@ -350,12 +346,29 @@ images.sort((a, b) => a.label.localeCompare(b.label));
       }, { signal: sidebarAbortController.signal });
     }
 
-    // Initialize only via astro:page-load (fires on initial load + View Transitions)
+    // Initialize gallery and sidebar handlers
+    // Use astro:after-swap to apply sidebar state BEFORE View Transition animations
+    // This prevents jerky animation when navigating to/from pottery page
+    document.addEventListener('astro:after-swap', () => {
+      const isPotteryPage = window.location.pathname.includes('/pottery');
+
+      if (isPotteryPage) {
+        // Entering pottery page - apply saved sidebar state
+        initSidebarToggle();
+      } else {
+        // Leaving pottery page - restore normal sidebar state
+        const drawer = document.querySelector('.drawer');
+        if (drawer) {
+          drawer.classList.remove('pottery-sidebar-collapsed');
+        }
+      }
+    });
+
+    // Use astro:page-load for gallery since it doesn't affect animations
     document.addEventListener('astro:page-load', () => {
       // Only run on pottery page (works with any base path)
       if (!window.location.pathname.includes('/pottery')) return;
       initGalleryClickHandler();
-      initSidebarToggle();
     });
 
     // Cleanup when navigating away
@@ -423,7 +436,7 @@ images.sort((a, b) => a.label.localeCompare(b.label));
   }
 
   .gallery-item:hover {
-    box-shadow: 0 0 0 3px #C8B482;
+    box-shadow: 0 0 0 3px theme('colors.accent');
   }
 
   .gallery-item .label {
@@ -432,7 +445,7 @@ images.sort((a, b) => a.label.localeCompare(b.label));
     left: 0;
     right: 0;
     padding: 2rem 1rem 0.75rem;
-    background: linear-gradient(to top, rgba(31, 31, 40, 0.9) 0%, rgba(31, 31, 40, 0) 100%);
+    background: linear-gradient(to top, rgb(31 31 40 / 0.9) 0%, rgb(31 31 40 / 0) 100%);
     font-size: clamp(0.75rem, 1.5vw, 0.875rem);
     font-weight: 500;
     opacity: 0;
@@ -462,7 +475,7 @@ images.sort((a, b) => a.label.localeCompare(b.label));
 
   /* Fancybox customization */
   :global(.fancybox__container) {
-    --fancybox-bg: rgba(31, 31, 40, 0.98);
+    --fancybox-bg: rgb(31 31 40 / 0.98);
   }
 
   :global(.fancybox__toolbar) {

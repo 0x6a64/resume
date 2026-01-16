@@ -11,7 +11,17 @@ const base = getBaseUrl();
 
 const { title, description, pubDate, updatedDate, heroImage, badge, tags = [] } = Astro.props;
 
-// Prepend base URL to heroImage if it's a root-relative path
+/**
+ * Resolve hero image path
+ *
+ * BEST PRACTICE: Use asset imports in blog frontmatter for optimal performance:
+ *   import myImage from '../../images/my-post.webp';
+ *   heroImage: myImage
+ *
+ * This enables automatic WebP conversion, responsive sizing, and format optimization.
+ * String URLs (e.g., "/images/my-post.png") bypass Astro's Image optimization,
+ * resulting in 40-60% larger file sizes and slower page loads.
+ */
 const resolvedHeroImage = typeof heroImage === 'string' && heroImage.startsWith('/')
   ? base + heroImage.slice(1)
   : heroImage;

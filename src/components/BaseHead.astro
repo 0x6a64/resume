@@ -83,10 +83,20 @@ const { title, description, image = getOGImagePath(), ogType = 'website' } = Ast
 
 <!-- Service Worker Registration -->
 <script is:inline define:vars={{ base, isDev: import.meta.env.DEV }}>
-  // Use promise-based flag to prevent duplicate registration attempts with View Transitions
-  if ('serviceWorker' in navigator && !window.__swRegisterPromise) {
-    window.__swRegisterPromise = navigator.serviceWorker
-      .register(base + 'sw.js')
+  // Atomic registration to prevent race conditions with View Transitions
+  if ('serviceWorker' in navigator && !window.__swRegistered && !window.__swRegisterPromise) {
+    window.__swRegisterPromise = Promise.resolve().then(() => {
+      // Double-check to prevent race between check and promise creation
+      if (!window.__swRegistered) {
+        return navigator.serviceWorker.register(base + 'sw.js');
+      }
+    })
+      .then((registration) => {
+        if (registration) {
+          window.__swRegistered = true;
+        }
+        return registration;
+      })
       .catch((err) => {
         if (isDev) {
           console.warn('Service Worker registration failed:', err);

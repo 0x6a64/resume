@@ -22,6 +22,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
     <div class="flip-card">
+      <span class="sr-only">Tech 901 CTF - Press Enter or Space to flip card</span>
       <div class="flip-card-inner">
         <div class="flip-card-front card bg-base-200 shadow-xl">
           <div class="card-body items-center justify-center text-center p-6">
@@ -36,6 +37,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       </div>
     </div>
     <div class="flip-card">
+      <span class="sr-only">Professional Credentials - Press Enter or Space to flip card</span>
       <div class="flip-card-inner">
         <div class="flip-card-front card bg-base-200 shadow-xl">
           <div class="card-body items-center justify-center text-center p-6">
@@ -54,6 +56,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       </div>
     </div>
     <div class="flip-card">
+      <span class="sr-only">Raymond James CTF - Press Enter or Space to flip card</span>
       <div class="flip-card-inner">
         <div class="flip-card-front card bg-base-200 shadow-xl">
           <div class="card-body items-center justify-center text-center p-6">
@@ -338,6 +341,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 <script>
   let flipCardsAbortController: AbortController | null = null;
   let demoTimeouts: ReturnType<typeof setTimeout>[] = [];
+  let flipCardsListenerAttached = false;
 
   function initFlipCards() {
     // Clean up previous event listeners
@@ -358,14 +362,16 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       // Get the card title for aria-label
       const titleElement = card.querySelector('.card-title');
       const title = titleElement?.textContent || 'Achievement card';
-      card.setAttribute('aria-label', `${title} - Press Enter or Space to flip`);
+      card.setAttribute('aria-label', `${title} - interactive card, press Enter or Space to reveal details`);
+      card.setAttribute('aria-expanded', 'false');
 
       // Add tap/click toggle for touch devices
       card.addEventListener('click', (e) => {
         // Only toggle on mobile or if not hovering
         if (window.innerWidth < 768) {
           e.preventDefault();
-          card.classList.toggle('flipped');
+          const isFlipped = card.classList.toggle('flipped');
+          card.setAttribute('aria-expanded', isFlipped ? 'true' : 'false');
         }
       }, { signal: flipCardsAbortController.signal });
 
@@ -373,7 +379,8 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          card.classList.toggle('flipped');
+          const isFlipped = card.classList.toggle('flipped');
+          card.setAttribute('aria-expanded', isFlipped ? 'true' : 'false');
         }
       }, { signal: flipCardsAbortController.signal });
 
@@ -395,8 +402,11 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   // Run on initial page load
   initFlipCards();
 
-  // Re-run when navigating via View Transitions
-  document.addEventListener('astro:page-load', initFlipCards);
+  // Re-run when navigating via View Transitions (guard against duplicates)
+  if (!flipCardsListenerAttached) {
+    flipCardsListenerAttached = true;
+    document.addEventListener('astro:page-load', initFlipCards);
+  }
 
   // Clean up on navigation
   document.addEventListener('astro:before-swap', () => {

@@ -11,7 +11,7 @@ const CACHE_NAME = `portfolio-${CACHE_VERSION}`;
 const MAX_CACHE_ITEMS = 50;
 const MAX_CACHE_BYTES = 50 * 1024 * 1024; // 50MB total cache size
 const MAX_SINGLE_ASSET_BYTES = 5 * 1024 * 1024; // 5MB per asset
-const TRIM_DEBOUNCE_COUNT = 10; // Only trim every N cache writes
+const TRIM_DEBOUNCE_COUNT = 5; // Trim every 5 cache writes for responsive cleanup
 
 /**
  * Base path for the application.

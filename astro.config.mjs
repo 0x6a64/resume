@@ -15,4 +15,12 @@ export default defineConfig({
       enabled: false, // Disabled for NixOS compatibility - workerd doesn't run on NixOS
     },
   }),
+  // Sharp image optimization at build time
+  // Note: Cloudflare adapter warning about runtime sharp is informational only.
+  // With output: "static", all images are optimized at build time, not runtime.
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
+    }
+  },
 });

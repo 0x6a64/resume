@@ -3,7 +3,6 @@
  * Optimized for performance with 30fps throttling and visibility API
  */
 
-const STORAGE_KEY = 'sidebar-animation-state';
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 // Animation configuration - extracted magic numbers
@@ -82,16 +81,6 @@ let resumeAnimationCallback: (() => void) | null = null;
 let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 let visibilityAbortController: AbortController | null = null;
 
-function saveAnimationState(): void {
-  if (currentAnimationState) {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(currentAnimationState));
-    } catch {
-      // Ignore storage errors
-    }
-  }
-}
-
 function createParticleElement(playground: HTMLElement, size: number): SVGSVGElement {
   const svg = document.createElementNS(SVG_NAMESPACE, 'svg');
   svg.setAttribute('viewBox', '0 0 256 256');
@@ -152,13 +141,6 @@ function createRandomParticle(
   };
 }
 
-function createParticleFromState(playground: HTMLElement, state: ParticleState): Particle {
-  return {
-    ...state,
-    el: createParticleElement(playground, state.size)
-  };
-}
-
 function isMobileOrLowPower(): boolean {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Modern mobile detection using touch capability
@@ -212,35 +194,11 @@ export function initLogoAnimation(): void {
   });
   resizeObserver.observe(playground);
 
-  // Try to restore saved state
-  let savedStateJson: string | null = null;
-  try {
-    savedStateJson = sessionStorage.getItem(STORAGE_KEY);
-  } catch {
-    // Ignore storage errors
-  }
-
   let time = 0;
 
-  if (savedStateJson) {
-    try {
-      const savedState: AnimationState = JSON.parse(savedStateJson);
-      time = savedState.time;
-      savedState.particles.slice(0, particleCount).forEach(state => {
-        particles.push(createParticleFromState(playground, state));
-      });
-      // Don't remove state immediately - keep for browser refresh
-      // State will be overwritten by new animation loop anyway
-    } catch {
-      sessionStorage.removeItem(STORAGE_KEY);
-    }
-  }
-
-  // Create fresh particles if none restored
-  if (particles.length === 0) {
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(createRandomParticle(playground, cachedRect, true, i, particleCount));
-    }
+  // Create particles
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(createRandomParticle(playground, cachedRect, true, i, particleCount));
   }
 
   lastFrameTime = performance.now();
@@ -341,9 +299,8 @@ export function setupAnimationEvents(): void {
   if (listenersAttached) return;
   listenersAttached = true;
 
-  // Before DOM swap: save state and cleanup old animation
+  // Before DOM swap: cleanup old animation
   document.addEventListener('astro:before-swap', () => {
-    saveAnimationState();
     cleanupAnimation();
   });
 
