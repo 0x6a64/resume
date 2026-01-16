@@ -125,18 +125,29 @@ function createRandomParticle(
     ? (index / total) * rect.height + Math.random() * 50
     : Math.random() * rect.height;
 
+  const el = createParticleElement(playground, size);
+  const baseOpacity = CONFIG.baseOpacityMin + Math.random() * CONFIG.baseOpacityRange;
+  const rotation = Math.random() * 360;
+
+  // Apply initial transform and opacity to prevent flash at (0,0)
+  const heightRatio = y / rect.height;
+  const initialOpacity = baseOpacity * Math.min(1, heightRatio * 1.5);
+  const translateX = baseX - size / 2;
+  const translateY = y - size / 2;
+  el.style.cssText = `opacity:${initialOpacity};transform:translate(${translateX}px,${translateY}px) rotate(${rotation}deg)`;
+
   return {
-    el: createParticleElement(playground, size),
+    el,
     x: baseX,
     y,
     baseX,
     size,
-    baseOpacity: CONFIG.baseOpacityMin + Math.random() * CONFIG.baseOpacityRange,
+    baseOpacity,
     riseSpeed: CONFIG.riseSpeedMin + Math.random() * CONFIG.riseSpeedRange,
     driftAmplitude: CONFIG.driftAmplitudeMin + Math.random() * CONFIG.driftAmplitudeRange,
     driftFrequency: CONFIG.driftFrequencyMin + Math.random() * CONFIG.driftFrequencyRange,
     phase: Math.random() * Math.PI * 2,
-    rotation: Math.random() * 360,
+    rotation,
     rotationSpeed: (Math.random() - 0.5) * CONFIG.rotationSpeedRange
   };
 }
