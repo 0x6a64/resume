@@ -31,6 +31,11 @@
 
             # Required for node-gyp (native module compilation)
             pkgs.python3
+            pkgs.nodePackages.node-gyp
+
+            # Build tools for native modules
+            pkgs.gcc
+            pkgs.gnumake
 
             # Development tools
             pkgs.nodePackages.typescript

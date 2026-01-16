@@ -8,6 +8,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://johndorion.com',
   base: '',
+  output: 'static',
   integrations: [mdx(), sitemap(), tailwind()],
   adapter: cloudflare({
     platformProxy: {

@@ -377,8 +377,8 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
         }
       }, { signal: flipCardsAbortController.signal });
 
-      // Demo flip on first card on page load
-      if (index === 0) {
+      // Demo flip on first card only if motion is preferred
+      if (index === 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         const timeout1 = setTimeout(() => {
           card.classList.add('demo-flip');
           // Remove demo class after animation completes
@@ -400,8 +400,11 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   // Clean up on navigation
   document.addEventListener('astro:before-swap', () => {
-    demoTimeouts.forEach(clearTimeout);
+    demoTimeouts.forEach(timeout => {
+      if (timeout) clearTimeout(timeout);
+    });
     demoTimeouts = [];
     flipCardsAbortController?.abort();
+    flipCardsAbortController = null;
   });
 </script>

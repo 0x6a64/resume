@@ -26,8 +26,21 @@ const resolvedImg = (() => {
 
   // Reject dangerous protocols
   const lowerImg = img.toLowerCase();
-  if (lowerImg.startsWith('javascript:') || lowerImg.startsWith('data:') || lowerImg.startsWith('vbscript:')) {
+  if (lowerImg.startsWith('javascript:') ||
+      lowerImg.startsWith('data:') ||
+      lowerImg.startsWith('vbscript:') ||
+      lowerImg.startsWith('file:')) {  // Added file: protocol
     return undefined; // Reject dangerous URLs
+  }
+
+  // Validate URL format for external URLs
+  if (lowerImg.startsWith('http://') || lowerImg.startsWith('https://')) {
+    try {
+      new URL(img);
+      return img;
+    } catch {
+      return undefined; // Invalid URL format
+    }
   }
 
   // Prepend base URL for absolute paths
