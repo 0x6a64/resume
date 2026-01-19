@@ -2,7 +2,7 @@
 
 My personal portfolio and resume website showcasing my work in cybersecurity, cloud infrastructure, and Linux systems.
 
-**Live site:** https://fransole.github.io/resume/
+**Live site:** https://0x6a64.github.io/resume/
 
 ## Tech Stack
 
