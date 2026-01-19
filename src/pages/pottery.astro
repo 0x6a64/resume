@@ -307,11 +307,9 @@ const images = validImageModules.map(([path, module]) => {
   };
 });
 
-// Fisher-Yates shuffle algorithm - shuffle on server before rendering
-for (let i = images.length - 1; i > 0; i--) {
-  const j = Math.floor(Math.random() * (i + 1));
-  [images[i], images[j]] = [images[j], images[i]];
-}
+// Note: Shuffle moved to client-side for static site deployment
+// Server-side shuffle only runs once at build time, so all visitors see same order
+// Client-side shuffle runs in browser on each page load
 ---
 
 <BaseLayout
@@ -423,6 +421,24 @@ for (let i = images.length - 1; i > 0; i--) {
         if (toggleText) toggleText.textContent = 'Hide sidebar';
         toggleBtn?.setAttribute('aria-expanded', 'true');
       }
+    }
+
+    // Client-side shuffle for static site deployment
+    function shuffleGallery(): void {
+      const gallery = document.getElementById('gallery');
+      if (!gallery) return;
+
+      const items = Array.from(gallery.querySelectorAll('.gallery-item'));
+      if (items.length === 0) return;
+
+      // Fisher-Yates shuffle
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+
+      // Reorder DOM elements
+      gallery.replaceChildren(...items);
     }
 
     async function loadFancybox(): Promise<void> {
@@ -589,6 +605,7 @@ for (let i = images.length - 1; i > 0; i--) {
     function initializePotteryPage(): void {
       if (!window.location.pathname.includes('/pottery')) return;
 
+      shuffleGallery();
       initSidebarToggle();
       initGalleryClickHandler();
     }
