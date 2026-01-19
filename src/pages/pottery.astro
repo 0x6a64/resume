@@ -147,6 +147,13 @@ images.sort((a, b) => a.label.localeCompare(b.label));
   </div>
 
   <script>
+    // Development-only console warning (client-side version)
+    function debugWarn(message: string, ...args: unknown[]): void {
+      if (import.meta.env.DEV) {
+        console.warn(message, ...args);
+      }
+    }
+
     // Fancybox loaded lazily on first gallery click
     // Use Promise pattern to handle race conditions on rapid clicks
     let fancyboxLoadPromise: Promise<void> | null = null;
