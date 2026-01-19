@@ -45,14 +45,14 @@ const articleData = {
 };
 ---
 
-<BaseLayout title={title} description={description} ogType="article">
+<BaseLayout title={title} description={description} ogType="article" showTranslateButton={true}>
   <JsonLd type="Article" data={articleData} />
   <main class="md:flex md:justify-center">
     <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
       {resolvedHeroImage && typeof resolvedHeroImage === 'string' ? (
         <img width={750} height={422} loading="eager" src={resolvedHeroImage} alt={title} class="w-full mb-6" />
       ) : resolvedHeroImage && (
-        <Image width={750} height={422} format="webp" quality={80} loading="eager" src={resolvedHeroImage} alt={title} class="w-full mb-6" />
+        <Image width={750} height={422} format="webp" quality={70} loading="eager" densities={[1, 2]} src={resolvedHeroImage} alt={title} class="w-full mb-6" />
       )}
       <h1 class="title my-2 text-4xl font-bold">{title}</h1>
       {pubDate && <time>{displayDate}</time>}

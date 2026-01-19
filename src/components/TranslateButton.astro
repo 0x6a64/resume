@@ -1,0 +1,216 @@
+---
+// TranslateButton.astro - URL-based translation
+const languages = [
+  { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'it', name: 'Italiano' },
+  { code: 'pt', name: 'Português' },
+  { code: 'nl', name: 'Nederlands' },
+  { code: 'ru', name: 'Русский' },
+  { code: 'zh-CN', name: '中文' },
+  { code: 'ja', name: '日本語' },
+  { code: 'ko', name: '한국어' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'hi', name: 'हिन्दी' },
+];
+---
+
+<div class="dropdown dropdown-end fixed top-20 right-2 lg:top-4 lg:right-4 z-50" id="translate-dropdown-wrapper">
+  <button
+    id="translate-btn-toggle"
+    class="translate-btn"
+    aria-label="Translate page"
+    title="Translate this page"
+    aria-expanded="false"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+    </svg>
+  </button>
+  <ul class="translate-dropdown" id="translate-dropdown-menu">
+    {languages.map(lang => (
+      <li>
+        <a
+          href="#"
+          class="translate-link"
+          data-lang={lang.code}
+        >
+          {lang.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .translate-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background-color: #2A2A37;
+    border: 2px solid #54546D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    transition: all 0.2s ease;
+    color: #DCD7BA;
+  }
+
+  @media (min-width: 1024px) {
+    .translate-btn {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .translate-btn:hover {
+    transform: scale(1.05);
+    background-color: #363646;
+    border-color: #7E9CD8;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  }
+
+  .translate-btn:active {
+    transform: scale(0.95);
+  }
+
+  .translate-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    display: none;
+    flex-direction: column;
+    width: 12rem;
+    max-height: 24rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #1F1F28;
+    border: 1px solid #54546D;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    z-index: 1;
+  }
+
+  .translate-dropdown.open {
+    display: flex;
+  }
+
+  .translate-dropdown li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .translate-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: #DCD7BA;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .translate-link:hover {
+    background-color: #2A2A37;
+    color: #7E9CD8;
+  }
+
+  .translate-link:active {
+    background-color: #363646;
+  }
+</style>
+
+<script>
+  declare global {
+    interface Window {
+      __translateClickHandler?: (e: Event) => void;
+    }
+  }
+
+  function initTranslateDropdown() {
+    const toggleBtn = document.getElementById('translate-btn-toggle');
+    const dropdown = document.getElementById('translate-dropdown-menu');
+    const wrapper = document.getElementById('translate-dropdown-wrapper');
+    const links = document.querySelectorAll('.translate-link');
+
+    if (!toggleBtn || !dropdown || !wrapper) return;
+
+    // Remove old button listener by cloning
+    const newToggleBtn = toggleBtn.cloneNode(true) as HTMLButtonElement;
+    toggleBtn.parentNode?.replaceChild(newToggleBtn, toggleBtn);
+
+    // Toggle dropdown on button click
+    newToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+
+      if (isOpen) {
+        dropdown.classList.remove('open');
+        newToggleBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        dropdown.classList.add('open');
+        newToggleBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    // Remove old click-outside handler
+    if (window.__translateClickHandler) {
+      document.removeEventListener('click', window.__translateClickHandler);
+    }
+
+    // Close dropdown when clicking outside
+    window.__translateClickHandler = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!wrapper.contains(target)) {
+        dropdown.classList.remove('open');
+        newToggleBtn.setAttribute('aria-expanded', 'false');
+      }
+    };
+    document.addEventListener('click', window.__translateClickHandler);
+
+    // Handle language link clicks
+    links.forEach(link => {
+      const newLink = link.cloneNode(true) as HTMLElement;
+      link.parentNode?.replaceChild(newLink, link);
+
+      newLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const langCode = (e.currentTarget as HTMLElement).getAttribute('data-lang');
+        if (langCode) {
+          const currentUrl = encodeURIComponent(window.location.href);
+          const translateUrl = `https://translate.google.com/translate?sl=auto&tl=${langCode}&u=${currentUrl}`;
+          window.location.href = translateUrl;
+        }
+      });
+    });
+  }
+
+  // Initialize on page load
+  document.addEventListener('astro:page-load', () => {
+    initTranslateDropdown();
+  });
+
+  // Cleanup on navigation
+  document.addEventListener('astro:before-swap', () => {
+    if (window.__translateClickHandler) {
+      document.removeEventListener('click', window.__translateClickHandler);
+      window.__translateClickHandler = undefined;
+    }
+  });
+
+  // Initialize immediately if DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTranslateDropdown);
+  } else {
+    initTranslateDropdown();
+  }
+</script>
