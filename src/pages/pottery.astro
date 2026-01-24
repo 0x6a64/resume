@@ -28,20 +28,31 @@ const validImageModules = Object.entries(imageModules).filter(([path, module]) =
 });
 
 // Convert to array and extract label from filename
-const images = validImageModules.map(([path, module]) => {
-  const filename = path.split("/").pop() || "";
-  const label = filename.replace(/\.(jpeg|jpg|png|gif|webp)$/i, "");
-  const description = `Handmade ceramic pottery: ${label}`;
-  const rawPath = rawImages[path]; // Get unprocessed URL for lightbox
+// CRITICAL FIX: Sort paths to ensure consistent order
+// This guarantees imageModules and rawImages are accessed in the same order
+const images = validImageModules
+  .sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+  .map(([path, module]) => {
+    const filename = path.split("/").pop() || "";
+    const label = filename.replace(/\.(jpeg|jpg|png|gif|webp)$/i, "");
+    const description = `Handmade ceramic pottery: ${label}`;
+    const rawPath = rawImages[path]; // Get unprocessed URL for lightbox
 
-  return {
-    src: module.default,    // ImageMetadata for optimized thumbnails
-    rawSrc: rawPath,        // String URL for lightbox (unprocessed)
-    label,                   // Filename without extension - single source of truth
-    filename,
-    description,             // Alt text for accessibility
-  };
-});
+    // Add defensive check to catch mismatches
+    if (!rawPath) {
+      console.error(`[Pottery] Missing raw image for: ${path}`);
+      return null;
+    }
+
+    return {
+      src: module.default,    // ImageMetadata for optimized thumbnails
+      rawSrc: rawPath,        // String URL for lightbox (unprocessed)
+      label,                   // Filename without extension - single source of truth
+      filename,
+      description,             // Alt text for accessibility
+    };
+  })
+  .filter(Boolean); // Filter out any null entries from missing raw images
 
 // Note: Shuffle moved to client-side for static site deployment
 // Server-side shuffle only runs once at build time, so all visitors see same order
