@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "Bash(git checkout:*)",
+      "Bash(comm -23:*)"
+    ]
+  }
+}
