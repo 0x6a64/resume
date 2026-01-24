@@ -5,7 +5,10 @@
       "WebSearch",
       "Bash(ls:*)",
       "Bash(git checkout:*)",
-      "Bash(comm -23:*)"
+      "Bash(comm -23:*)",
+      "Bash(xargs cat:*)",
+      "Bash(xargs:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }

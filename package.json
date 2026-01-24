@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "rm -rf dist .astro",
     "build": "astro build",
+    "build:incremental": "astro build",
+    "clean": "rm -rf dist .astro",
     "preview": "astro preview",
     "preview:wrangler": "astro build && wrangler dev",
     "deploy": "wrangler deploy",
