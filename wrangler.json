@@ -1,8 +1,17 @@
 {
 	"name": "resume",
 	"compatibility_date": "2026-01-15",
-	"pages_build_output_dir": "./dist",
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "404-page"
+	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"routes": [
+		{
+			"pattern": "johndorion.com",
+			"custom_domain": true
+		}
+	]
 }
