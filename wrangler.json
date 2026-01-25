@@ -4,11 +4,5 @@
 	"pages_build_output_dir": "./dist",
 	"observability": {
 		"enabled": true
-	},
-	"routes": [
-		{
-			"pattern": "johndorion.com/*",
-			"custom_domain": true
-		}
-	]
+	}
 }
