@@ -1,0 +1,233 @@
+---
+// Top public repos for the given user, fetched in the browser so the list
+// stays current between deploys.
+interface Props {
+  username?: string;
+  limit?: number;
+}
+
+const { username = "0x6a64", limit = 6 } = Astro.props;
+---
+
+<div data-gh-repos data-username={username} data-limit={limit}>
+  <h3 class="text-xl font-bold mb-3">Top repositories</h3>
+  <p class="text-sm text-base-content/70 mb-4" data-gh-repos-status>Loading repositories...</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3" data-gh-repos-grid></div>
+</div>
+
+<style>
+  :global(.gh-repo-card) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #16161D;
+    border: 1px solid #223249;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  :global(.gh-repo-card:hover) {
+    border-color: #C0A36E;
+    transform: translateY(-2px);
+  }
+
+  :global(.gh-repo-name) {
+    font-weight: 700;
+    color: #7E9CD8;
+    word-break: break-word;
+  }
+
+  :global(.gh-repo-desc) {
+    font-size: 0.8125rem;
+    color: rgb(220 215 186 / 0.8);
+    flex-grow: 1;
+  }
+
+  :global(.gh-repo-meta) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 0.75rem;
+    color: rgb(220 215 186 / 0.6);
+  }
+
+  :global(.gh-repo-meta span) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  :global(.gh-lang-dot) {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #C0A36E;
+  }
+</style>
+
+<script>
+  const REPOS_TIMEOUT_MS = 8000;
+
+  type Repo = {
+    name: string;
+    html_url: string;
+    description: string | null;
+    language: string | null;
+    stargazers_count: number;
+    forks_count: number;
+    pushed_at: string;
+    fork: boolean;
+    archived: boolean;
+  };
+
+  // Rough GitHub language colors, with a themed fallback for anything unlisted.
+  const LANG_COLORS: Record<string, string> = {
+    Astro: "#FF5D01",
+    Shell: "#89E051",
+    Nix: "#7E7EFF",
+    Python: "#3572A5",
+    TypeScript: "#3178C6",
+    JavaScript: "#F1E05A",
+    HTML: "#E34C26",
+    CSS: "#563D7C",
+    Go: "#00ADD8",
+    Rust: "#DEA584",
+    PowerShell: "#012456",
+    Lua: "#000080",
+  };
+
+  function relativeTime(iso: string) {
+    const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+    if (days <= 0) return "today";
+    if (days === 1) return "yesterday";
+    if (days < 30) return `${days} days ago`;
+    const months = Math.round(days / 30);
+    if (months < 12) return `${months} month${months === 1 ? "" : "s"} ago`;
+    const years = Math.round(days / 365);
+    return `${years} year${years === 1 ? "" : "s"} ago`;
+  }
+
+  function metaItem(label: string, iconPath: string) {
+    return (
+      `<span><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">` +
+      `<path d="${iconPath}"></path></svg>${label}</span>`
+    );
+  }
+
+  const STAR_ICON =
+    "M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z";
+  const FORK_ICON =
+    "M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0Z";
+
+  function renderRepos(grid: HTMLElement, repos: Repo[]) {
+    grid.replaceChildren();
+    repos.forEach((repo) => {
+      const card = document.createElement("a");
+      card.className = "gh-repo-card";
+      card.href = repo.html_url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+
+      const meta: string[] = [];
+      if (repo.language) {
+        const color = LANG_COLORS[repo.language] || "#C0A36E";
+        meta.push(
+          `<span><i class="gh-lang-dot" style="background-color:${color}"></i>${repo.language}</span>`
+        );
+      }
+      if (repo.stargazers_count > 0) meta.push(metaItem(String(repo.stargazers_count), STAR_ICON));
+      if (repo.forks_count > 0) meta.push(metaItem(String(repo.forks_count), FORK_ICON));
+      meta.push(`<span>Updated ${relativeTime(repo.pushed_at)}</span>`);
+
+      // Repo fields come from the GitHub API, so build text nodes rather than
+      // interpolating them into markup.
+      const name = document.createElement("div");
+      name.className = "gh-repo-name";
+      name.textContent = repo.name;
+
+      const desc = document.createElement("p");
+      desc.className = "gh-repo-desc";
+      desc.textContent = repo.description || "No description";
+
+      const metaRow = document.createElement("div");
+      metaRow.className = "gh-repo-meta";
+      metaRow.innerHTML = meta.join("");
+
+      card.append(name, desc, metaRow);
+      grid.appendChild(card);
+    });
+  }
+
+  async function loadRepos(root: HTMLElement) {
+    const username = root.getAttribute("data-username");
+    const limit = Number(root.getAttribute("data-limit")) || 6;
+    const grid = root.querySelector<HTMLElement>("[data-gh-repos-grid]");
+    const status = root.querySelector<HTMLElement>("[data-gh-repos-status]");
+    if (!username || !grid || !status) return;
+
+    const cacheKey = `gh-repos:${username}`;
+    let repos: Repo[] | null = null;
+
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) repos = JSON.parse(cached);
+    } catch {
+      // Unavailable or holding junk, fall through to the network.
+    }
+
+    if (!repos) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), REPOS_TIMEOUT_MS);
+      try {
+        const res = await fetch(
+          `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=pushed`,
+          { signal: controller.signal, headers: { Accept: "application/vnd.github+json" } }
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        repos = await res.json();
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(repos));
+        } catch {
+          // Cache is a nicety, not a requirement.
+        }
+      } catch {
+        root.remove();
+        return;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    // Own work only, most-starred first, then most recently pushed.
+    const top = (Array.isArray(repos) ? repos : [])
+      .filter((r) => !r.fork && !r.archived)
+      .sort(
+        (a, b) =>
+          b.stargazers_count - a.stargazers_count ||
+          new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime()
+      )
+      .slice(0, limit);
+
+    if (top.length === 0) {
+      root.remove();
+      return;
+    }
+
+    renderRepos(grid, top);
+    status.remove();
+  }
+
+  function initRepos() {
+    document.querySelectorAll<HTMLElement>("[data-gh-repos]").forEach((root) => void loadRepos(root));
+  }
+
+  if (!window.__ghReposListenerAttached) {
+    window.__ghReposListenerAttached = true;
+    document.addEventListener("astro:page-load", initRepos);
+  }
+</script>

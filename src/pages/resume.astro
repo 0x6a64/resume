@@ -1,11 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TimeLineElement from "../components/cv/TimeLine.astro";
+import { getBaseUrl } from "../lib/getBaseUrl";
+
+const base = getBaseUrl();
 ---
 
 <BaseLayout
   title="John Dorion - Professional Resume & Experience"
-  description="Consulting Engineer with expertise in AWS, Red Hat, Splunk, and cybersecurity. 28+ certifications, two-time CTF winner, and passionate homelab builder. View my complete professional experience and technical skills."
+  description="Security practitioner and consulting engineer working across detection engineering, security operations, identity, and cloud infrastructure. Splunk Enterprise Security Certified Admin, AWS Solutions Architect Associate, two-time CTF winner, and homelab builder."
   showTranslateButton={true}
 >
   <div class="mb-5">
@@ -13,7 +16,12 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="mb-10 text-justify">
-    I'm currently working as a Consulting Engineer at Silex Data Solutions, helping clients make sense of complex infrastructure, cloud, and security solutions. Previously I've worked in cybersecurity operations where I got hands-on with SIEMs like CrowdStrike and Splunk. I also run a homelab where I've picked up most of my Linux, virtualization, and networking knowledge. When I'm not working, you might find me competing in CTF competitions or tinkering with my Proxmox cluster.
+    I'm currently a Consulting Engineer at Silex Data Solutions, helping clients make sense of complex
+    infrastructure, cloud, and security problems. Before that I spent a couple of years in security operations:
+    building Splunk and CrowdStrike detections for a large enterprise security team and then supervising the analysts
+    working that queue, and before that running an L1/L2 access queue and reviewing vendor controls.
+    I also run a homelab where I've picked up most of my Linux, virtualization, and networking knowledge. When I'm
+    not working, you might find me competing in CTF competitions or tinkering with my Proxmox cluster.
   </div>
 
   <!-- Key Achievements -->
@@ -44,20 +52,20 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
           <div class="card-body items-center justify-center text-center p-6">
             <div class="text-4xl">📜</div>
             <h3 class="card-title text-sm mt-2">Professional Credentials</h3>
-            <p class="text-primary font-bold">28+ Certifications</p>
+            <p class="text-primary font-bold">30+ Certifications</p>
           </div>
         </div>
         <div class="flip-card-back shadow-xl rounded-2xl">
           <ul class="list-disc list-inside text-left">
-            <li>Splunk Security SE</li>
-            <li>AWS Cloud Practitioner</li>
-            <li>Red Hat credentials</li>
+            <li>Splunk ES Certified Admin</li>
+            <li>Splunk Cybersecurity Defense Analyst</li>
+            <li>AWS Solutions Architect Associate</li>
           </ul>
         </div>
       </div>
     </div>
     <div class="flip-card">
-      <span class="sr-only">Raymond James </span>
+      <span class="sr-only">I learn by building - Press Enter or Space to flip card</span>
       <div class="flip-card-inner">
         <div class="flip-card-front card bg-base-200 shadow-xl">
           <div class="card-body items-center justify-center text-center p-6">
@@ -67,7 +75,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
           </div>
         </div>
         <div class="flip-card-back shadow-xl rounded-2xl">
-          <p>Self-taught infrastructure: Proxmox, OPNSense, Ansible, NixOS.</p>
+          <p>Self-taught infrastructure: Splunk, Proxmox, OPNsense, Ansible, NixOS.</p>
         </div>
       </div>
     </div>
@@ -87,7 +95,13 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       title="Bachelor of Business Administration - Business Information Technology"
       subtitle="2023 - 2024 at Fogelman College of Business & Economics, University of Memphis | GPA: 3.8"
     >
-      <p class="ml-4">Organization: MILE Leadership Program</p>
+      <p class="ml-4">Magna Cum Laude, Dean's List. Organization: MILE Leadership Program</p>
+    </TimeLineElement>
+    <TimeLineElement
+      title="Associate of Science - Business Administration"
+      subtitle="Southwest Tennessee Community College"
+    >
+      <p class="ml-4">Magna Cum Laude</p>
     </TimeLineElement>
   </div>
 
@@ -97,47 +111,64 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="time-line-container mb-10 space-y-6">
     <TimeLineElement
-      title="Associate Consulting Engineer"
+      title="Associate Consulting Engineer / Sales Engineer"
       subtitle="Dec 2024 - Present at Silex Data Solutions, Memphis, TN"
       accent={true}
     >
       <ul class="list-disc ml-4 space-y-1">
-        <li>Provide pre-sales technical support for enterprise accounts, including solution scoping, RFX responses, and technical demonstrations</li>
-        <li>Partner with account executives to assess customer technology landscapes, configure solutions, and develop SOWs across security, cloud, and infrastructure product lines</li>
-        <li>Drive cloud practice development by establishing vendor relationships, defining processes, and onboarding team members</li>
+        <li>Run technical discovery with customer application, infrastructure, and security teams to understand their environment, what they are trying to accomplish, and what stands in the way, then scope the work that follows</li>
+        <li>Manage several client engagements at once across security analytics, cloud, and infrastructure, tracking dependencies, decisions, and blockers through delivery and handoff</li>
+        <li>Research emerging data protection problems, including the data loss risk created by generative AI tools and where conventional DLP coverage breaks down against prompts, uploads, and integrations</li>
         <li>Maintain technical credibility through continuous certification in AWS, Splunk, Red Hat, Zscaler, and other enterprise platforms</li>
       </ul>
     </TimeLineElement>
 
     <TimeLineElement
+      title="Vice President & Operations Lead"
+      subtitle="Jan 2026 - Present at BSides Memphis (Volunteer, Part-Time)"
+      url="https://bsidesmemphis.org"
+      accent={true}
+    >
+      <ul class="list-disc ml-4 space-y-1">
+        <li>Administer the organization Google Workspace tenant: user and group lifecycle, access control, sharing settings, DNS, and SPF, DKIM, and DMARC</li>
+        <li>Coordinate conference operations across vendor and venue relationships and the budget with a committee of volunteers</li>
+      </ul>
+    </TimeLineElement>
+
+    <TimeLineElement
       title="InfoSec Technical Supervisor & Project Coordinator"
-      subtitle="Apr 2024 - Dec 2024 at UMRF Ventures (FedEx Contract), Memphis, TN"
+      subtitle="Apr 2024 - Dec 2024 at UMRF Ventures, Memphis, TN"
     >
       <ul class="list-disc ml-4 space-y-1">
-        <li>Led team developing detection engineering alerts in Splunk and CrowdStrike, plus Python-based security log analysis tools leveraging ML/AI on Google Cloud Platform</li>
-        <li>Implemented software development standards and restandardized documentation on SharePoint to establish single source of truth for team knowledge</li>
-        <li>Coached and trained team members; participated in SAFe training and PI planning with enterprise client</li>
-        <li>Presented technical achievements and project updates to stakeholders at company events</li>
+        <li>Supervised an analyst team investigating and tuning Splunk and CrowdStrike alerts for an enterprise security operations group, owning what got worked, what got escalated, and what got closed</li>
+        <li>Built CrowdStrike alerts to detect data exfiltration based on file type and device type, covering sensitive files moving to removable media and other unmanaged devices</li>
+        <li>Consolidated team knowledge into SharePoint and streamlined it into a single source of truth</li>
+        <li>Put change control around detection content with source control, peer review, and testing before anything reached production</li>
+        <li>Directed development of Python tooling on Google Cloud Platform that pulled from REST APIs and applied machine learning to security log analysis, surfacing activity that rule-based logic missed</li>
+        <li>Reported alert volume, coverage gaps, and delivery metrics to client leadership, and presented findings to business and executive stakeholders outside the security organization</li>
       </ul>
     </TimeLineElement>
 
     <TimeLineElement
-      title="InfoSec Data Scientist"
-      subtitle="Dec 2023 - Apr 2024 at UMRF Ventures (FedEx Contract), Memphis, TN"
+      title="InfoSec Data Scientist / Detection Developer"
+      subtitle="Dec 2023 - Apr 2024 at UMRF Ventures, Memphis, TN"
     >
       <ul class="list-disc ml-4 space-y-1">
-        <li>Built Splunk Cloud alerts and dashboards by interpreting MITRE ATT&CK framework and conducting independent research to expand detection coverage</li>
-        <li>Analyzed security data from multiple sources to generate actionable insights for enterprise security operations</li>
+        <li>Built and tuned Splunk Cloud dashboards, alerts, and scheduled searches using SPL across enterprise log sources, applying performance-conscious search design to large data volumes</li>
+        <li>Translated MITRE ATT&CK techniques and independent research into tested detection logic, adjusting thresholds with stakeholders to cut false positives</li>
+        <li>Normalized and enriched event data against the Splunk Common Information Model using field aliases, calculated fields, tags, event types, and lookups to enable correlation across disparate sources</li>
+        <li>Validated onboarded log sources for timestamp accuracy, sourcetype assignment, event breaking, and field extraction, and identified sensitive information in ingested data that was escalated to security leadership for remediation</li>
       </ul>
     </TimeLineElement>
 
     <TimeLineElement
-      title="IAM Analyst → Shift Lead → Vendor Risk Analyst"
+      title="Vendor Risk Analyst / IAM Operations Shift Lead / IAM Analyst"
       subtitle="Aug 2023 - Dec 2023 at UMRF Ventures, Memphis, TN"
     >
       <ul class="list-disc ml-4 space-y-1">
-        <li>Progressed through three roles in four months: managed IAM operations in Active Directory and SailPoint, led L1/L2 ticket teams, and performed GRC analysis of SOC2 Type 2 reports</li>
-        <li>Automated user provisioning and access management using PowerShell; documented all work in ServiceNow</li>
+        <li>Reviewed SOC 2 Type 2 reports and SIG questionnaires, corresponding with external vendors to confirm control coverage and writing findings up for other business units</li>
+        <li>Created and secured user roles, entitlements, and group access in Active Directory, Active Roles, and SailPoint IdentityIQ, and coordinated remediation with the teams that owned the affected systems</li>
+        <li>Worked a live ServiceNow queue against service-level expectations, led L1 and L2 shifts with ticket quality review, and took escalated L3 issues</li>
       </ul>
     </TimeLineElement>
 
@@ -146,37 +177,38 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
       subtitle="Sep 2020 - Jan 2023 at Summer Ave. Art & Clay, Memphis, TN"
     >
       <ul class="list-disc ml-4 space-y-1">
-        <li>Automated business operations by integrating Square POS with Google Calendar/Contacts using Zapier and Integromat; built Excel tools to streamline ordering</li>
-        <li>Implemented SEO improvements, Google Analytics, and social media integrations; managed website and newsletter</li>
+        <li>Managed day to day operations of a ceramics studio, and built and taught pottery classes for students from beginner through advanced</li>
+        <li>Mixed glazes from raw materials and handled wheel and kiln maintenance and repair</li>
+        <li>Automated business operations by integrating Square POS with Google Calendar and Contacts using Zapier and Integromat; built Excel tools to streamline ordering</li>
+        <li>Implemented SEO improvements, Google Analytics, and social media integrations; managed the website and newsletter</li>
       </ul>
+      <a href={`${base}pottery/`} class="btn btn-outline btn-sm border-accent text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-colors gap-2 mt-3 no-underline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        See my pottery
+      </a>
     </TimeLineElement>
   </div>
 
   <!-- Homelab Section -->
   <div class="bg-base-300 rounded-lg p-6 mb-10">
     <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
-      <span>🖥️</span> Homelab
+      <span>🖥️</span> Homelab & Lab Infrastructure
     </h3>
     <p class="mb-4">Self-directed infrastructure lab for hands-on learning and experimentation with enterprise technologies:</p>
     <ul class="list-disc ml-6 space-y-1">
+      <li>Run a small Splunk lab with dashboards and alerts built against it</li>
+      <li>Run a small Windows Server and Active Directory lab</li>
       <li>Built multi-node Proxmox cluster hosting Linux containers and VMs</li>
-      <li>Configured OPNSense for secure dual-stack network with firewall, VLANs, and VPN</li>
+      <li>Configured OPNsense for secure dual-stack network with firewall, VLANs, and VPN</li>
       <li>Implemented backup strategy using NAS and Backblaze B2</li>
-      <li>Manage DNS, SSL certificates, and WAF through Cloudflare</li>
-      <li>Automate system administration across hosts using Ansible</li>
+      <li>Manage DNS, TLS certificates (Certbot), and WAF through Cloudflare</li>
+      <li>Automate patching and system administration across hosts using Ansible</li>
       <li>Running NixOS as daily driver with Nix Flakes for fully declarative and reproducible system configuration</li>
       <li>Automated Nix flake updates and package version checks via GitHub Actions</li>
       <li>Built custom Nix packages and configured CI/CD to publish sanitized public version of NixOS configs and dotfiles</li>
       <li>Created comprehensive documentation and network diagrams for all infrastructure</li>
+      <li>Presented on reproducible cybersecurity labs at a regional security meetup, and presenting on the topic again at the BSides Memphis Linux village</li>
     </ul>
-    <div class="mt-4">
-      <a href="https://github.com/0x6a64" target="_blank" rel="noopener noreferrer" class="btn btn-accent gap-2 hover:brightness-110 hover:scale-[1.02] transition-all">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-        View My Projects on GitHub
-      </a>
-    </div>
   </div>
 
   <div class="mb-5">
@@ -185,21 +217,21 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
     <div>
-      <h4 class="font-bold text-lg mb-2">AWS</h4>
-      <ul class="list-disc mx-6 grid gap-1">
-        <li>AWS Certified Cloud Practitioner</li>
-        <li>AWS Solutions Architect Associate (In Progress)</li>
-        <li>Partner Sales Accreditation</li>
-        <li>Cloud Economics Essentials</li>
-        <li>Generative AI Essentials</li>
-      </ul>
-    </div>
-    <div>
       <h4 class="font-bold text-lg mb-2">Splunk</h4>
       <ul class="list-disc mx-6 grid gap-1">
         <li>Enterprise Security Certified Admin</li>
-        <li>Cybersecurity Defense Analyst</li>
+        <li>Certified Cybersecurity Defense Analyst</li>
         <li>Accredited Security SE I (Partner)</li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-lg mb-2">AWS</h4>
+      <ul class="list-disc mx-6 grid gap-1">
+        <li>Certified Solutions Architect - Associate</li>
+        <li>Certified Cloud Practitioner</li>
+        <li>Partner Sales Accreditation</li>
+        <li>Cloud Economics Essentials</li>
+        <li>Generative AI Essentials</li>
       </ul>
     </div>
     <div>
@@ -231,18 +263,26 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
     <h2 class="text-3xl w-full font-bold">Skills</h2>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
     <div>
-      <h4 class="font-bold mb-2">Security</h4>
-      <p class="text-sm">CrowdStrike Falcon, Splunk Enterprise Security, SIEM, MITRE ATT&CK, CTF, SOC2, GRC</p>
+      <h4 class="font-bold mb-2">Security Operations & Detection</h4>
+      <p class="text-sm">Splunk Cloud, Splunk Enterprise, Splunk Enterprise Security, SPL, CrowdStrike Falcon EDR, MITRE ATT&CK, detection development, alert triage and tuning, false positive reduction, correlation searches, dashboards and scheduled reporting, investigation timelines, escalation procedures</p>
+    </div>
+    <div>
+      <h4 class="font-bold mb-2">Data Protection & Identity</h4>
+      <p class="text-sm">DLP concepts and exfiltration detection by file and device type, data classification, sensitive data handling, data retention, least privilege, Active Directory, Active Roles, SailPoint IdentityIQ, entitlement and access review, DNS, SPF, DKIM, DMARC, Google Workspace administration</p>
     </div>
     <div>
       <h4 class="font-bold mb-2">Cloud & Infrastructure</h4>
-      <p class="text-sm">AWS, GCP, Red Hat Enterprise Linux, Proxmox, OPNSense, Ansible, Docker</p>
+      <p class="text-sm">AWS, GCP, Linux (various distros), Windows, containers and virtualization (Proxmox, LXC, NixOS), networking (VLANs, VPN, DNS, TLS), Cloudflare, OPNsense, backup and recovery</p>
     </div>
     <div>
-      <h4 class="font-bold mb-2">Networking</h4>
-      <p class="text-sm">VLANs, VPN, Firewalls, DNS, SSL/TLS, WAF, CloudFlare</p>
+      <h4 class="font-bold mb-2">Engineering & Automation</h4>
+      <p class="text-sm">Python, PowerShell, Bash, REST APIs, Ansible, Git, source control and peer review, change control, machine learning applied to security log analysis, generative AI data-leakage risk research</p>
+    </div>
+    <div>
+      <h4 class="font-bold mb-2">Governance & Delivery</h4>
+      <p class="text-sm">SOC 2 Type 2 and SIG review, vendor risk, ServiceNow ticketing, Agile and SAFe PI planning, requirements gathering, stakeholder workshops, SharePoint knowledge management</p>
     </div>
   </div>
 
@@ -262,7 +302,7 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
 
   <ul class="list-disc mx-6 mb-10">
     <li><strong>English</strong> - Native</li>
-    <li><strong>Dutch</strong> - Professional Working Proficiency</li>
+    <li><strong>Dutch (Belgian/Flemish)</strong> - Moderate Working Proficiency</li>
   </ul>
 </BaseLayout>
 

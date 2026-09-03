@@ -3,9 +3,11 @@ interface Props {
   title: string;
   subtitle: string;
   accent?: boolean;
+  /** Optional external link for the entry title. */
+  url?: string;
 }
 
-const { title, subtitle, accent = false } = Astro.props;
+const { title, subtitle, accent = false, url } = Astro.props;
 const dotColor = accent ? "bg-accent" : "bg-primary";
 const lineColor = accent ? "bg-accent" : "bg-primary";
 ---
@@ -16,7 +18,17 @@ const lineColor = accent ? "bg-accent" : "bg-primary";
     <span class={`education__line ${lineColor} block h-full w-[2px] translate-x-[7px]`}></span>
   </div>
   <div class="experience__data bd-grid px-5">
-    <h3 class="font-semibold mb-1">{title}</h3>
+    <h3 class="font-semibold mb-1">
+      {
+        url ? (
+          <a href={url} target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">
+            {title} &nearr;
+          </a>
+        ) : (
+          title
+        )
+      }
+    </h3>
     <span class="font-light text-sm">{subtitle}</span>
     <p class="my-2 text-justify">
       <slot />

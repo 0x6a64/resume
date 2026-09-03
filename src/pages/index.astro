@@ -1,56 +1,63 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HorizontalCard from "../components/HorizontalCard.astro";
 import JsonLd from "../components/JsonLd.astro";
-import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug";
-import { getBaseUrl } from "../lib/getBaseUrl";
+import GitHubContributions from "../components/GitHubContributions.astro";
+import GitHubRepos from "../components/GitHubRepos.astro";
 
-const base = getBaseUrl();
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const last_posts = posts.slice(0, 3);
+const currently = [
+  {
+    label: "Consulting Engineer",
+    detail: "Working with customer security, infrastructure, and application teams to figure out what they need and scope the work that follows.",
+  },
+  {
+    label: "VP & Operations Lead, BSides Memphis",
+    detail: "Volunteering on conference operations and running the organization's Google Workspace tenant.",
+    href: "https://bsidesmemphis.org",
+  },
+];
 ---
 
 <BaseLayout>
   <JsonLd type="Person" />
+
+  <!-- Hero -->
   <div class="mb-5">
     <p class="text-xl py-1">Hey there!</p>
-    <h1 class="text-3xl w-full font-bold">I'm John Dorion</h1>
+    <h1 class="text-4xl w-full font-bold">I'm John Dorion</h1>
+    <p class="text-lg text-accent mt-2">Consulting engineer, security practitioner, Linux nerd.</p>
   </div>
 
-  <div class="mb-10 text-justify">
-    I'm a Linux nerd who loves digging into infrastructure, cloud, and security challenges. My background is in cybersecurity operations, but these days I spend most of my time helping clients navigate complex technical solutions. Outside of work, I'm usually tinkering with my homelab, competing in CTF competitions, or experimenting with NixOS as my daily driver.
+  <div class="mb-12 text-justify">
+    My background is in security operations: building detections in Splunk and CrowdStrike, working alerts, and
+    figuring out what the data was actually trying to say. These days I spend most of my time on the consulting
+    side, sitting down with customer teams to work out what they have, what they need it to do, and what it'll
+    take to get there. Outside of work I'm usually tinkering with my homelab, competing in CTF competitions, or
+    rebuilding something in NixOS for the third time.
   </div>
 
-  <div class="mb-10 flex gap-3">
-    <a class="btn btn-outline border-primary text-primary hover:bg-primary hover:text-primary-content hover:border-primary transition-colors gap-2" href="https://www.linkedin.com/in/johndorion" target="_blank" rel="noopener noreferrer">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-      Let's connect!
-    </a>
-    <a href={`${base}resume`} class="btn btn-outline border-accent text-accent hover:bg-accent hover:text-accent-content hover:border-accent transition-colors gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-      View Resume
-    </a>
-  </div>
+  <!-- Currently -->
+  <h2 class="text-3xl w-full font-bold mb-5">Currently</h2>
 
-  <div>
-    <h2 class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</h2>
-  </div>
+  <ul class="mb-12 space-y-4">
+    {
+      currently.map((item) => (
+        <li class="border-l-2 border-accent pl-4">
+          <h3 class="font-bold">
+            {item.href ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">
+                {item.label} &nearr;
+              </a>
+            ) : (
+              item.label
+            )}
+          </h3>
+          <p class="text-sm text-base-content/80">{item.detail}</p>
+        </li>
+      ))
+    }
+  </ul>
 
-  {
-    last_posts.map((post) => (
-      <>
-        <HorizontalCard
-          title={post.data.title}
-          img={post.data.heroImage}
-          desc={post.data.description}
-          url={`${base}blog/${createSlug(post.data.title, post.id)}`}
-          target="_self"
-          badge={post.data.badge}
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
+  <!-- GitHub activity -->
+  <GitHubContributions username="0x6a64" />
+  <GitHubRepos username="0x6a64" limit={6} />
 </BaseLayout>

@@ -4,7 +4,7 @@
  */
 
 // Increment version on each deployment to bust cache
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `portfolio-${CACHE_VERSION}`;
 
 // Cache size limits
@@ -26,7 +26,6 @@ const PRECACHE_ASSETS = [
   `${BASE_PATH}/`,
   `${BASE_PATH}/resume/`,
   `${BASE_PATH}/pottery/`,
-  `${BASE_PATH}/blog/`,
   `${BASE_PATH}/404.html`,
   `${BASE_PATH}/favicon.svg`,
   `${BASE_PATH}/social_img.webp`

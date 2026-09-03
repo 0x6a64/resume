@@ -8,6 +8,8 @@ declare global {
     __swipeListenerAttached?: boolean;
     __menuListenerAttached?: boolean;
     __flipCardsListenerAttached?: boolean;
+    __ghContribListenerAttached?: boolean;
+    __ghReposListenerAttached?: boolean;
   }
 }
 

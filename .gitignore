@@ -1,6 +1,10 @@
 # build output
 dist/
 .cache
+.output/
+.vercel/
+.netlify/
+
 # dependencies
 node_modules/
 
@@ -9,17 +13,50 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
-
-# environment variables
+# environment variables / secrets
 .env
-.env.production
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+secrets.json
+credentials.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+.npmrc
+.netrc
 
-# macOS-specific files
+# cloud / deploy state
+.wrangler/
+.cloudflare/
+
+# agent & editor config (local, machine-specific)
+.claude/
+.cursor/
+.aider*
+.vscode/
+.idea/
+*.code-workspace
+.nixd.json
+*.swp
+*.swo
+*~
+
+# OS-specific files
 .DS_Store
+Thumbs.db
+desktop.ini
 
 # direnv
 .direnv/
+.envrc.local
 
 # Astro
 .astro/

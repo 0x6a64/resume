@@ -7,8 +7,20 @@ const base = getBaseUrl();
 <ul class="menu grow shrink menu-md overflow-y-auto" data-base={base}>
     <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="home" href={base}>Home</a></li>
     <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="resume" href={`${base}resume/`}>Resume</a></li>
-    <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="blog" href={`${base}blog/`}>Blog</a></li>
     <li><a class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors" id="pottery" href={`${base}pottery/`}>Pottery</a></li>
+    <li>
+        <a
+            class="py-3 text-base hover:bg-accent hover:text-accent-content transition-colors"
+            id="bsides"
+            href="https://bsidesmemphis.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="BSides Memphis - I serve as Vice President & Operations Lead"
+        >
+            BSides Memphis
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-60" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+    </li>
 </ul>
 
 <script>
@@ -30,19 +42,16 @@ function updateActiveMenuItem() {
   if (typeof base !== 'string' || base.length === 0) {
     // Fallback to simple matching if base is invalid
     if (path.includes('/resume')) activeId = 'resume';
-    else if (path.includes('/blog')) activeId = 'blog';
     else if (path.includes('/pottery')) activeId = 'pottery';
   } else {
     // Normal path matching with base
     const normalizedBase = base.endsWith('/') ? base : base + '/';
     const homeMatch = path === base || path === normalizedBase || path === base + 'index.html' || path === base.slice(0, -1);
     const resumeMatch = path.startsWith(normalizedBase + 'resume');
-    const blogMatch = path.startsWith(normalizedBase + 'blog');
     const potteryMatch = path.startsWith(normalizedBase + 'pottery');
 
-    if (homeMatch && !resumeMatch && !blogMatch && !potteryMatch) activeId = 'home';
+    if (homeMatch && !resumeMatch && !potteryMatch) activeId = 'home';
     else if (resumeMatch) activeId = 'resume';
-    else if (blogMatch) activeId = 'blog';
     else if (potteryMatch) activeId = 'pottery';
   }
 

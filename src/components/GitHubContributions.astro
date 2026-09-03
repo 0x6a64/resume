@@ -1,0 +1,287 @@
+---
+// Renders a GitHub-style contribution heatmap for the given user.
+// Data is fetched in the browser so the chart stays current between deploys.
+interface Props {
+  username?: string;
+  title?: string;
+}
+
+const { username = "0x6a64", title = "What I've been building" } = Astro.props;
+const profileUrl = `https://github.com/${username}`;
+---
+
+<section class="mb-10" data-gh-contributions data-username={username}>
+  <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+    <h2 class="text-3xl font-bold">{title}</h2>
+    <a
+      href={profileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-sm text-base-content/60 hover:text-accent transition-colors"
+    >
+      @{username} on GitHub &rarr;
+    </a>
+  </div>
+
+  <div class="bg-base-200 rounded-lg p-4 sm:p-6">
+    <p class="text-sm text-base-content/70 mb-4" data-gh-summary>
+      Loading the last year of commits&hellip;
+    </p>
+
+    <div class="overflow-x-auto pb-1">
+      <div class="gh-chart" data-gh-chart role="img" aria-label="GitHub contribution activity for the last year">
+        <div class="gh-months" data-gh-months aria-hidden="true"></div>
+        <div class="gh-body">
+          <div class="gh-days" aria-hidden="true">
+            <span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span>
+          </div>
+          <div class="gh-grid" data-gh-grid></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 mt-4 text-xs text-base-content/60" data-gh-legend hidden>
+      <span>Less</span>
+      <span class="gh-cell" data-level="0"></span>
+      <span class="gh-cell" data-level="1"></span>
+      <span class="gh-cell" data-level="2"></span>
+      <span class="gh-cell" data-level="3"></span>
+      <span class="gh-cell" data-level="4"></span>
+      <span>More</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Sizing lives on the section so the legend swatches - which sit outside
+     .gh-chart - resolve the same custom properties as the grid. */
+  [data-gh-contributions] {
+    --gh-cell: 11px;
+    --gh-gap: 3px;
+  }
+
+  .gh-chart {
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  .gh-body {
+    display: flex;
+    gap: var(--gh-gap);
+  }
+
+  /* Day-of-week labels down the left edge */
+  .gh-days {
+    display: grid;
+    grid-template-rows: repeat(7, var(--gh-cell));
+    gap: var(--gh-gap);
+    padding-right: 4px;
+    font-size: 9px;
+    line-height: var(--gh-cell);
+    color: rgb(220 215 186 / 0.5);
+    white-space: nowrap;
+  }
+
+  /* Weeks run left to right, days top to bottom */
+  .gh-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(7, var(--gh-cell));
+    grid-auto-columns: var(--gh-cell);
+    gap: var(--gh-gap);
+  }
+
+  .gh-months {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc(var(--gh-cell) + var(--gh-gap));
+    margin-left: calc(24px + var(--gh-gap));
+    margin-bottom: 4px;
+    font-size: 9px;
+    color: rgb(220 215 186 / 0.5);
+  }
+
+  .gh-months span {
+    white-space: nowrap;
+  }
+
+  /* Global: the day cells are created in JS, so they never get Astro's
+     scoping attribute and a scoped selector would not match them. */
+  :global(.gh-cell) {
+    display: block;
+    width: var(--gh-cell);
+    height: var(--gh-cell);
+    border-radius: 2px;
+    background-color: #2A2A37;
+  }
+
+  :global(.gh-cell[data-level="1"]) { background-color: #2F4230; }
+  :global(.gh-cell[data-level="2"]) { background-color: #4A6B44; }
+  :global(.gh-cell[data-level="3"]) { background-color: #76946A; }
+  :global(.gh-cell[data-level="4"]) { background-color: #98BB6C; }
+
+  /* Skeleton shimmer while the fetch is in flight */
+  .gh-grid[data-loading] :global(.gh-cell) {
+    animation: gh-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes gh-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.75; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gh-grid[data-loading] :global(.gh-cell) {
+      animation: none;
+      opacity: 0.5;
+    }
+  }
+</style>
+
+<script>
+  const API_BASE = "https://github-contributions-api.jogruber.de/v4";
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const FETCH_TIMEOUT_MS = 8000;
+
+  type Day = { date: string; count: number; level: number };
+
+  function makeCell(level: number, label?: string) {
+    const cell = document.createElement("span");
+    cell.className = "gh-cell";
+    cell.setAttribute("data-level", String(level));
+    if (label) cell.setAttribute("title", label);
+    return cell;
+  }
+
+  /** Placeholder grid so the section has its final height before data lands. */
+  function renderSkeleton(grid: HTMLElement) {
+    grid.replaceChildren();
+    grid.setAttribute("data-loading", "");
+    for (let i = 0; i < 53 * 7; i++) grid.appendChild(makeCell(0));
+  }
+
+  function renderMonthLabels(months: HTMLElement, days: Day[], leadingBlanks: number) {
+    months.replaceChildren();
+    // One grid column per week; label a column when a new month starts in it.
+    const weekCount = Math.ceil((leadingBlanks + days.length) / 7);
+    const labels: string[] = new Array(weekCount).fill("");
+    let lastMonth = -1;
+
+    days.forEach((day, i) => {
+      const week = Math.floor((leadingBlanks + i) / 7);
+      const month = new Date(day.date + "T00:00:00").getMonth();
+      // Skip the first column so a partial month doesn't crowd the left edge.
+      if (month !== lastMonth && week > 0 && !labels[week]) {
+        labels[week] = MONTHS[month];
+        lastMonth = month;
+      } else if (lastMonth === -1) {
+        lastMonth = month;
+      }
+    });
+
+    labels.forEach((label) => {
+      const span = document.createElement("span");
+      span.textContent = label;
+      months.appendChild(span);
+    });
+  }
+
+  function renderChart(grid: HTMLElement, months: HTMLElement, days: Day[]) {
+    grid.replaceChildren();
+    grid.removeAttribute("data-loading");
+
+    // Pad so the first real day lands on its correct day-of-week row.
+    const leadingBlanks = new Date(days[0].date + "T00:00:00").getDay();
+    for (let i = 0; i < leadingBlanks; i++) {
+      const blank = document.createElement("span");
+      blank.style.visibility = "hidden";
+      blank.className = "gh-cell";
+      grid.appendChild(blank);
+    }
+
+    const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
+    days.forEach((day) => {
+      const when = fmt.format(new Date(day.date + "T00:00:00"));
+      const noun = day.count === 1 ? "contribution" : "contributions";
+      grid.appendChild(makeCell(day.level, `${day.count} ${noun} on ${when}`));
+    });
+
+    renderMonthLabels(months, days, leadingBlanks);
+  }
+
+  function renderError(section: HTMLElement, summary: HTMLElement, username: string) {
+    // Nothing useful to show without data - drop the chart rather than leave a dead grid.
+    section.querySelector<HTMLElement>("[data-gh-chart]")?.remove();
+    summary.innerHTML =
+      `Couldn't load the contribution graph right now. ` +
+      `<a class="link hover:text-accent" href="https://github.com/${username}" target="_blank" rel="noopener noreferrer">See it on GitHub</a>.`;
+  }
+
+  async function loadContributions(section: HTMLElement) {
+    const username = section.getAttribute("data-username");
+    const grid = section.querySelector<HTMLElement>("[data-gh-grid]");
+    const months = section.querySelector<HTMLElement>("[data-gh-months]");
+    const summary = section.querySelector<HTMLElement>("[data-gh-summary]");
+    const legend = section.querySelector<HTMLElement>("[data-gh-legend]");
+    if (!username || !grid || !months || !summary) return;
+
+    renderSkeleton(grid);
+
+    const cacheKey = `gh-contrib:${username}`;
+    let payload: { total: Record<string, number>; contributions: Day[] } | null = null;
+
+    // Reuse this tab's copy so in-site navigation doesn't refetch.
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) payload = JSON.parse(cached);
+    } catch {
+      // sessionStorage unavailable or holding junk - fall through to the network.
+    }
+
+    if (!payload) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+      try {
+        const res = await fetch(`${API_BASE}/${encodeURIComponent(username)}?y=last`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        payload = await res.json();
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(payload));
+        } catch {
+          // Cache is a nicety - a full or blocked store shouldn't break the chart.
+        }
+      } catch {
+        renderError(section, summary, username);
+        return;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    const days = payload?.contributions;
+    if (!Array.isArray(days) || days.length === 0) {
+      renderError(section, summary, username);
+      return;
+    }
+
+    renderChart(grid, months, days);
+
+    const total = payload?.total?.lastYear ?? days.reduce((sum, d) => sum + d.count, 0);
+    summary.textContent = `${total.toLocaleString()} contributions in the last year.`;
+    legend?.removeAttribute("hidden");
+  }
+
+  function initContributions() {
+    document
+      .querySelectorAll<HTMLElement>("[data-gh-contributions]")
+      .forEach((section) => void loadContributions(section));
+  }
+
+  // astro:page-load fires on first paint and after every View Transitions navigation.
+  if (!window.__ghContribListenerAttached) {
+    window.__ghContribListenerAttached = true;
+    document.addEventListener("astro:page-load", initContributions);
+  }
+</script>
