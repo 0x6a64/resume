@@ -24,7 +24,7 @@ const profileUrl = `https://github.com/${username}`;
   </div>
 
   <div class="bg-base-200 rounded-lg p-4 sm:p-6">
-    <p class="text-sm text-base-content/70 mb-4" data-gh-summary>
+    <p class="text-base font-medium text-base-content/80 mb-4" data-gh-summary>
       Loading the last year of commits&hellip;
     </p>
 
@@ -40,7 +40,7 @@ const profileUrl = `https://github.com/${username}`;
       </div>
     </div>
 
-    <div class="flex items-center justify-end gap-2 mt-4 text-xs text-base-content/60" data-gh-legend hidden>
+    <div class="flex items-center justify-end gap-2 mt-4 text-sm font-medium text-base-content/70" data-gh-legend hidden>
       <span>Less</span>
       <span class="gh-cell" data-level="0"></span>
       <span class="gh-cell" data-level="1"></span>
@@ -58,6 +58,15 @@ const profileUrl = `https://github.com/${username}`;
   [data-gh-contributions] {
     --gh-cell: 11px;
     --gh-gap: 3px;
+    /* Width of the day-label gutter; the month row offsets by the same amount. */
+    --gh-gutter: 30px;
+
+    /* Kanagawa primary blue, ramped from the empty-day background. */
+    --gh-level-0: #2A2A37;
+    --gh-level-1: #2B3B54;
+    --gh-level-2: #3E5A80;
+    --gh-level-3: #5D7CB0;
+    --gh-level-4: #7E9CD8;
   }
 
   .gh-chart {
@@ -75,10 +84,14 @@ const profileUrl = `https://github.com/${username}`;
     display: grid;
     grid-template-rows: repeat(7, var(--gh-cell));
     gap: var(--gh-gap);
-    padding-right: 4px;
-    font-size: 9px;
+    box-sizing: border-box;
+    width: var(--gh-gutter);
+    padding-right: 6px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 600;
     line-height: var(--gh-cell);
-    color: rgb(220 215 186 / 0.5);
+    color: rgb(220 215 186 / 0.65);
     white-space: nowrap;
   }
 
@@ -95,10 +108,11 @@ const profileUrl = `https://github.com/${username}`;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: calc(var(--gh-cell) + var(--gh-gap));
-    margin-left: calc(24px + var(--gh-gap));
-    margin-bottom: 4px;
-    font-size: 9px;
-    color: rgb(220 215 186 / 0.5);
+    margin-left: calc(var(--gh-gutter) + var(--gh-gap));
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgb(220 215 186 / 0.65);
   }
 
   .gh-months span {
@@ -112,13 +126,13 @@ const profileUrl = `https://github.com/${username}`;
     width: var(--gh-cell);
     height: var(--gh-cell);
     border-radius: 2px;
-    background-color: #2A2A37;
+    background-color: var(--gh-level-0);
   }
 
-  :global(.gh-cell[data-level="1"]) { background-color: #2F4230; }
-  :global(.gh-cell[data-level="2"]) { background-color: #4A6B44; }
-  :global(.gh-cell[data-level="3"]) { background-color: #76946A; }
-  :global(.gh-cell[data-level="4"]) { background-color: #98BB6C; }
+  :global(.gh-cell[data-level="1"]) { background-color: var(--gh-level-1); }
+  :global(.gh-cell[data-level="2"]) { background-color: var(--gh-level-2); }
+  :global(.gh-cell[data-level="3"]) { background-color: var(--gh-level-3); }
+  :global(.gh-cell[data-level="4"]) { background-color: var(--gh-level-4); }
 
   /* Skeleton shimmer while the fetch is in flight */
   .gh-grid[data-loading] :global(.gh-cell) {
