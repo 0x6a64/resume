@@ -8,6 +8,10 @@ export default defineConfig({
   site: 'https://johndorion.com',
   base: '',
   output: 'static',
+  // Hide the Astro dev toolbar overlay in `astro dev` (never present in builds).
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [mdx(), sitemap(), tailwind()],
   // Sharp image optimization at build time
   // Note: Cloudflare adapter warning about runtime sharp is informational only.
